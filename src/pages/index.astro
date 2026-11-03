@@ -1,0 +1,57 @@
+---
+// import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import FeactureSection from "../sections/FeactureSection.astro";
+import ServicesSticky from "../sections/ServicesSticky.astro";
+import Testimonials from "../sections/Testimonials.astro";
+import ReasonsToChooseUs from "../sections/ReasonsToChooseUs.astro";
+import ServicePackages from "../sections/ServicePackages.astro";
+import BannerInfo from "../sections/BannerInfo.astro";
+import Price from "../sections/Price.astro";
+import Projects from "../sections/Projects.astro";
+import ServiceOptions from "../sections/ServiceOptions.astro";
+import FeactureSectionTwo from "../sections/FeactureSectionTwo.astro";
+import FeactureSectionThree from "../sections/FeactureSectionThree.astro";
+import HeroTwo from "../sections/HeroTwo.astro";
+import ServicesCards from "../sections/ServicesCards.astro";
+import About from "../sections/About.astro";
+import GalleryFilter from "../sections/GalleryFilter.astro";
+import GallerySwiper from "../sections/GallerySwiper.astro";
+import AboutTwo from "../sections/AboutTwo.astro";
+import LinksSecction from "../sections/LinksSecction.astro";
+import Section3Alert from "../sections/Section3Alert.astro";
+import SliderHero from "../sections/SliderHero.astro";
+import HiveGallery from "../components/HiveGallery.astro";
+
+const title = "Fotógrafo profesional & Filmmaker | Moisés Magariño";
+const description =
+	"Fotografía profesional diseñada para conectar, perdurar y contar historias únicas.";
+---
+
+<Layout title={title} description={description}>
+	<Hero />
+	<GalleryFilter />
+	<GallerySwiper />
+	<AboutTwo />
+	<HiveGallery />
+	<ServicesSticky />
+	<!-- <Section3Alert /> -->
+	<Testimonials />
+
+	<LinksSecction />
+
+	<About />
+	<SliderHero />
+
+	<!-- <ServicesCards /> -->
+	<!-- <Projects /> -->
+	<!-- <FeactureSectionThree /> -->
+	<!-- <ServiceOptions /> -->
+	<!-- <FeactureSection /> -->
+	<!-- <ReasonsToChooseUs /> -->
+
+	<!-- Extras--->
+
+	<style></style>
+</Layout>

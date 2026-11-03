@@ -1,0 +1,138 @@
+---
+import Header from "../components/Header.astro";
+import SEO from "../components/SEO.astro";
+import Footer from "../sections/Footer.astro";
+import { SITE_CONFIG } from "../consts/site-config";
+import "../css/style.css";
+
+const logo = "/logo-moises.png";
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonical?: string;
+	robots?: string;
+	ogImage?: string;
+	ogImageAlt?: string;
+	ogType?: "website" | "article" | "profile";
+	showHeader?: boolean;
+}
+
+const {
+	title = SITE_CONFIG.title,
+	description = SITE_CONFIG.description,
+	canonical,
+	robots,
+	ogImage,
+	ogImageAlt,
+	ogType,
+	showHeader = true,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		{
+			/* Color de fondo crítico inline: la hoja completa llega tarde al
+			    <head> y sin esto se ve un flash blanco en el primer paint. */
+		}
+		<style is:inline>
+			html,
+			body {
+				background: #0d0f13;
+			}
+		</style>
+		<link rel="icon" type="image/png" href={logo} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="apple-touch-icon" href="/portfolio-icon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content={SITE_CONFIG.themeColor} />
+		<meta name="author" content={SITE_CONFIG.author} />
+		<SEO
+			title={title}
+			description={description}
+			canonical={canonical}
+			robots={robots}
+			ogImage={ogImage}
+			ogImageAlt={ogImageAlt}
+			ogType={ogType}
+		/>
+	</head>
+	<body>
+		<a
+			href="#main-content"
+			class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black focus:outline-none"
+		>
+			Saltar al contenido principal
+		</a>
+		{showHeader && <Header />}
+		<main id="main-content">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--color-brand: #73777b; /* plata grafito */
+		--color-brand-two: #d9dcdf;
+		--color-brand-secundary: #f3f4f6; /* tarjetas, secciones */
+		--color-text-primary: #c3c7ca; /* texto principal */
+		--color-secundary: #e5e7e9;
+		--color-text-black: #0d0f13;
+		--color-gray-100: #f3f4f6;
+
+		--grey-titanio: #a7adb4;
+
+		--color-highlight: #c5c9cc; /* para resaltar botones o links */
+		--color-bg: #0d0f13; /* fondo */
+
+		--color-error: #dc2626; /* mensajes de error */
+		--color-success: #16a34a; /* mensajes de éxito */
+
+		--padding-all-web: 50px;
+	}
+
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		background-color: var(--color-bg);
+		/* min-height: 200vh; */
+		font-family: "Segoe UI";
+		transition: width 1s ease;
+
+		/* scrollbar-gutter: stable; */
+		/* overflow: hidden; */
+	}
+	h1,
+	h2,
+	h3,
+	h4 {
+		color: #ffffff;
+	}
+
+	.text-gray-100 {
+		color: var(--color-gray-100);
+	}
+
+	.gradiente-title-g {
+		--color-gradient: var(--color-brand-two);
+		background-image: linear-gradient(
+			to right,
+			var(--color-brand),
+			var(--color-gradient)
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	.gradiente-title-g {
+		color: var(--color-brand);
+		/* fallback */
+	}
+</style>

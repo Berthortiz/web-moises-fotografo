@@ -1,0 +1,253 @@
+---
+import { Icon } from "astro-icon/components";
+
+const testimonials = [
+  {
+    description:
+      "Capturó cada momento con naturalidad. Al ver las fotos, volvemos a sentir la emoción de ese día.",
+    name: "Heilyn Carolina",
+    job: "Realtor",
+    srcImg: "/images/avatars/heilyn-carolina.jpg",
+    instagramUrl: "https://www.instagram.com/heilyncarolinarealtor/",
+  },
+  {
+    description:
+      "La cobertura transmitió la energía del escenario y del público. El material quedó listo para compartir el evento.",
+    name: "Edwin Guevara",
+    job: "Consultor migratorio",
+    srcImg: "/images/avatars/edwing.png",
+    instagramUrl: "https://www.instagram.com/fgcusa1/",
+  },
+  {
+    description:
+      "Entendió la esencia del podcast y creó contenido visual consistente para cada episodio y sus redes.",
+    name: "Creador de podcast",
+    job: "Podcasts y creación de contenido",
+    srcImg: "/images/avatars/uifaces-human-avatar%20(7).jpg",
+    instagramUrl: "#",
+  },
+];
+---
+
+<section
+  id="testimonios"
+  class="testimonials-section w-full text-gray-200 body-font md:py-20"
+>
+  <div
+    class="mx-auto flex h-fit w-full max-w-7xl flex-col items-center px-6 py-10 md:gap-5 md:px-14"
+  >
+    <header
+      class="mb-16 flex w-full flex-col items-center justify-center text-center md:mb-0"
+    >
+      <span
+        class="w-fit rounded-full border border-white/15 bg-white/[0.06] px-6 py-2 text-2xl font-bold tracking-wide text-[#d3d7da] md:text-3xl"
+        >Testimonios</span
+      >
+      <h2
+        class="title-font font-serif mb-4 pt-5 text-3xl font-medium text-gray-100 sm:text-4xl lg:text-5xl"
+      >
+        Historias que merecen <span class="text-[#c5c9cc]">quedarse</span>
+      </h2>
+      <p
+        class="mb-1 text-[1.1em] font-normal leading-relaxed text-gray-300 md:mb-8 md:max-w-[75ch]"
+      >
+        He tenido el privilegio de trabajar con personas extraordinarias. Más
+        que clientes, somos aliados de proyecto; estas son sus palabras sobre el
+        camino recorrido.
+      </p>
+    </header>
+
+    <div id="testimonials-swiper" class="swiper mySwiper w-full relative h-fit">
+      <div class="swiper-wrapper">
+        {
+          testimonials.map((testimonial) => (
+            <div class="swiper-slide">
+              <a
+                href={testimonial.instagramUrl}
+                target={
+                  testimonial.instagramUrl.startsWith("https://")
+                    ? "_blank"
+                    : undefined
+                }
+                rel={
+                  testimonial.instagramUrl.startsWith("https://")
+                    ? "noopener noreferrer"
+                    : undefined
+                }
+                aria-label={`Ver Instagram de ${testimonial.name}`}
+                class="block h-full w-full text-inherit no-underline"
+              >
+                <figure class="testimonial-card flex h-full w-full flex-col gap-4 rounded-2xl border border-white/10 p-8 text-left shadow-sm">
+                  <figcaption class="flex flex-col gap-4">
+                    <div class="flex gap-4">
+                      <div class="h-12 w-12 overflow-hidden rounded-full border border-white/20 bg-neutral-700">
+                        <img
+                          src={testimonial.srcImg}
+                          alt={`Avatar de ${testimonial.name}`}
+                          class="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                          <cite class="font-bold not-italic text-gray-100">
+                            {testimonial.name}
+                          </cite>
+                          <span
+                            aria-hidden="true"
+                            class="transition-colors hover:text-white"
+                          >
+                            <Icon name="icon-instagram" size={15} />
+                          </span>
+                        </div>
+                        <span class="text-sm text-gray-400">
+                          {testimonial.job}
+                        </span>
+                      </div>
+                    </div>
+                    <blockquote class="text-gray-300">
+                      <div
+                        class="flex gap-1 pb-3 text-[#c5c9cc]"
+                        aria-label="5 estrellas"
+                      >
+                        <Icon name="star" size={20} />
+                        <Icon name="star" size={20} />
+                        <Icon name="star" size={20} />
+                        <Icon name="star" size={20} />
+                        <Icon name="star" size={20} />
+                      </div>
+                      <p>"{testimonial.description}"</p>
+                    </blockquote>
+                  </figcaption>
+                </figure>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+
+      <div class="swiper-pagination !relative mt-5"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import Swiper from "swiper";
+  import { Pagination, Autoplay, FreeMode, Navigation } from "swiper/modules";
+
+  // Estilos necesarios
+  import "swiper/css";
+  import "swiper/css/pagination";
+  import "swiper/css/navigation";
+
+  // Inicialización
+  const initSwiper = () => {
+    new Swiper(".mySwiper", {
+      modules: [Pagination, Navigation, Autoplay, FreeMode],
+      slidesPerView: 1,
+      spaceBetween: 40,
+      loop: true,
+      speed: 1200,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: "#testimonials-swiper .swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: "#testimonials-swiper .swiper-button-next",
+        prevEl: "#testimonials-swiper .swiper-button-prev",
+      },
+      breakpoints: {
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 2 },
+      },
+    });
+
+    document
+      .querySelectorAll(
+        ".mySwiper .swiper-button-next, .mySwiper .swiper-button-prev",
+      )
+      .forEach((arrow) => {
+        arrow.style.setProperty("--arrow-stroke-width", "1px");
+      });
+  };
+
+  initSwiper();
+</script>
+
+<style>
+  .testimonials-section {
+    background:
+      radial-gradient(
+        ellipse at 50% 60%,
+        rgba(195, 201, 206, 0.19),
+        transparent 52%
+      ),
+      #0d0f13;
+    background-size: 90% 70%;
+    background-position: 50% 0%;
+    background-repeat: no-repeat;
+  }
+
+  .swiper-slide {
+    display: flex;
+    height: auto;
+  }
+
+  :global(#testimonials-swiper .swiper-wrapper) {
+    align-items: stretch;
+  }
+
+  .testimonial-card {
+    background: rgba(254, 253, 253, 0.015);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    background-color: var(--color-brand) !important;
+    width: 20px;
+    border-radius: 5px;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    --swiper-navigation-color: var(--color-brand);
+    background: transparent;
+    top: 60% !important;
+    /* left: % !important; */
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+
+    border-radius: 1rem;
+  }
+
+  :global(.mySwiper .swiper-button-next::after),
+  :global(.mySwiper .swiper-button-prev::after) {
+    -webkit-text-stroke: var(--arrow-stroke-width, 0px) currentColor;
+  }
+
+  .swiper-button-prev {
+    left: 10px !important;
+  }
+  .swiper-button-next {
+    right: 10px !important;
+  }
+  .swiper-pagination-bullet {
+    background: #9ca3af !important;
+  }
+  .swiper-horizontal > .swiper-pagination-bullets,
+  .swiper-pagination-horizontal.swiper-pagination-bullets {
+    .swiper-pagination-bullet {
+      background: #9ca3af;
+      /* margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 4px); */
+    }
+  }
+</style>

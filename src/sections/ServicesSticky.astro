@@ -1,0 +1,132 @@
+---
+import { Icon } from "astro-icon/components";
+import ButtonPrimary from "../components/ButtonPrimary.astro";
+import ButtonShine from "../components/ButtonShine.astro";
+
+const services = [
+  {
+    title: "Bodas y Eventos Románticos",
+    image:
+      "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80",
+    description: `Cobertura fotográfica para bodas, engagements y celebraciones íntimas en Miami, Fort Lauderdale, Coral Gables y todo el sur de Florida.`,
+  },
+  {
+    title: "Quinceañeras y Celebraciones Familiares",
+    image:
+      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80",
+    description: `Sesiones y cobertura para 15 años, cumpleaños, reuniones familiares y momentos que merecen quedarse para siempre.`,
+  },
+  {
+    title: "Real Estate y Listings Inmobiliarios",
+    image:
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80",
+    description: `Fotografía profesional para propiedades, alquileres, vendedores, desarrollos y agentes inmobiliarios con estilo premium.`,
+  },
+  {
+    title: "Conciertos, Festivales y Eventos en Vivo",
+    image:
+      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=900&q=80",
+    description: `Captura la energía, emoción y atmósfera de conciertos, fiestas, festivales y eventos de gran escala en Miami.`,
+  },
+  {
+    title: "Retratos y Branding Personal",
+    image:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    description: `Retratos corporativos, lifestyle, headshots y sesiones personales con una estética elegante y auténtica.`,
+  },
+  {
+    title: "Editorial, Lifestyle y Viajes",
+    image:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+    description: `Imágenes para marcas, editoriales, viajes y contenido visual premium que transmite lujo, estilo y presencia.`,
+  },
+];
+---
+
+<section
+  id="servicios"
+  class="w-full h-fit flex md:items-center relative text-gray-600 body-font md:py-20"
+>
+  <div
+    class=`flex flex-col md:flex-row md:gap-10 lg:max-w-7xl xl:gap-10  mx-auto py-10 px-6 md:px-14 items-center relative z-10 `
+  >
+    <!-- col-1 -->
+    <div
+      class="self-start w-full md:sticky top-15 xl:top-40 flex flex-col md:w-2/4 md:justify-start md:items-start md:text-left mb-16 md:mb-0 items-center text-center"
+    >
+      <span
+        class="btn-item-service text-[1em]
+         px-3 py-1
+         rounded-2xl
+         
+         border-[0.1rem]
+         font-light"
+      >
+        • Servicio destacado
+      </span>
+      <h2
+        class="title-font font-serif text-5xl sm:text-5xl md:text-5xl lg:text-6xl mb-4 pt-5 font-bold text-(--color-brand-secundary)"
+      >
+        <span class="gradiente-title- font-serif"></span>Back & white Moments
+      </h2>
+
+      <p
+        class="md:max-w-[58ch] mb-8 leading-relaxed font-normal text-[1em] text-gray-500"
+      >
+        Capturo recuerdos auténticos, emociones reales y detalles que transmiten
+        estilo para bodas, eventos, propiedades y personal brands en Miami, Fort
+        Lauderdale, Palm Beach y toda la costa de Florida.
+      </p>
+      <ul class="flex flex-col gap-4 text-[1.1em]"></ul>
+
+      <div class="flex justify-center">
+        <ButtonShine
+          href="https://wa.link/c24rca"
+          class="w-full flex items-center justify-center border border-[#d9dde0]/70 px-5 py-3 text-sm font-medium text-[#e3e6e8] sm:w-fit"
+          text="Contactar"
+        >
+          <Icon name="whatsapp-solid" size={19} />
+        </ButtonShine>
+      </div>
+    </div>
+    <!-- col-2-->
+    <div class="md:w-2/4 grid md:grid-cols-1 grid-cols-1 gap-10">
+      {
+        services.map((service) => {
+          return (
+            <section class="flex flex-col gap-3 overflow-hidden rounded-2xl bg-[#D5D9DA10] p-0 text-(--color-brand-secundary)">
+              <img
+                src={service.image}
+                alt={service.title}
+                class="h-52 w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+
+              <div class="flex flex-col items-center gap-2 p-8 pt-5 text-center md:items-start md:text-left">
+                <h2 class="text-2xl font-medium lg:text-lg xl:text-2xl ">
+                  {service.title}
+                </h2>
+                <p class="text-(--color-text-primary) text-base lg:text-sm">
+                  {service.description}
+                </p>
+              </div>
+            </section>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .btn-item-service {
+    color: var(--color-text-primary);
+    border: 1px solid
+      color-mix(
+        in oklab,
+        var(--color-gray-900) 50%,
+        var(--color-brand-secundary)
+      );
+  }
+</style>

@@ -1,0 +1,342 @@
+---
+// Galería filtrable con carga automática y por lotes de 10.
+//
+// ✅ Escala a cientos de fotos sin tocar código:
+//    Solo suelta las fotos en una subcarpeta de
+//    "src/assets/pagina web fotos y video/<categoria>/" y aparecen solas.
+//
+// ✅ Optimización en el build (sharp, integrado en Astro):
+//    - Miniatura WebP 480px + 960px (retina) → rejilla
+//    - Versión grande WebP min(1920px, ancho real) → visor PhotoSwipe
+//    Nunca se sirve el archivo original.
+//
+// ✅ Carga progresiva: solo las primeras 10 fotos van en el HTML.
+//    El resto viaja como URLs de texto (JSON) y el botón "Ver 10 más"
+//    las inserta bajo demanda: si nadie pulsa, no se descargan.
+//
+// ✅ PhotoSwipe se carga desde jsDelivr. Los .MOV/.psd se ignoran.
+
+import { GALLERY as Gallery, PICTURES } from "../data/gallery";
+
+// Solo el primer lote se renderiza como HTML; el resto queda como texto
+const INITIAL_COUNT = 15;
+const firstBatch = PICTURES.slice(0, INITIAL_COUNT);
+const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
+---
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css"
+/>
+
+<section id="galeria" class="text-white px-6 py-18">
+    <div class="max-w-6xl mx-auto py-8 flex flex-col justify-center lg:gap-4">
+        <h1
+            class="title-font font-serif leading-10 md:leading-10 font-bold text-center text-4xl
+        sm:text-4xl md:text-4xl lg:text-6xl mb-4 text-gray-100"
+        >
+            <span class="gradiente-title-hero"> Galeria</span>
+        </h1>
+        <p
+            class="mx-auto w-full max-w-[75ch] text-center leading-7 text-gray-300 sm:text-lg"
+        >
+            Fotografía profesional, Convierte cada momento en imágenes con alma
+            que hacen volver a sentir cada instante.
+        </p>
+        <br />
+
+        <!-- Pestañas de Filtrado -->
+        <div
+            class="flex flex-wrap justify-center gap-6 mb-8 text-sm font-bold tracking-widest"
+        >
+            <button
+                class="tab-btn cursor-pointer text-amber-500 border-b-2 border-amber-500 pb-1"
+                data-category="all">All</button
+            >
+            {
+                Gallery.map(({ label }) => (
+                    <button
+                        class="tab-btn cursor-pointer text-gray-400 hover:text-white pb-1"
+                        data-category={label}
+                    >
+                        {label}
+                    </button>
+                ))
+            }
+        </div>
+
+        <nav
+            aria-label="Galerías completas por categoría"
+            class="mb-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm text-gray-300"
+        >
+            <span class="text-gray-500">Ver todas las fotos:</span>
+            {
+                Gallery.map(({ label, slug }) => (
+                    <a
+                        href={`/galeria/${slug}/`}
+                        class="underline decoration-white/30 underline-offset-4 transition-colors hover:text-amber-400"
+                    >
+                        {label}
+                    </a>
+                ))
+            }
+        </nav>
+
+        <!-- Rejilla Masonry (columnas CSS): solo el primer lote existe en el DOM -->
+        <div id="gallery" class="columns-2 gap-4 md:columns-3">
+            {
+                firstBatch.map((pic) => (
+                    <a
+                        href={pic.large}
+                        data-pswp-src={pic.large}
+                        data-pswp-width={pic.width}
+                        data-pswp-height={pic.height}
+                        data-category={pic.category}
+                        target="_blank"
+                        style={`aspect-ratio: ${pic.width} / ${pic.height}`}
+                        aria-busy="true"
+                        class="gallery-item group relative mb-4 block break-inside-avoid overflow-hidden rounded-lg bg-neutral-900"
+                    >
+                        <img
+                            src={pic.thumb}
+                            srcset={pic.srcset}
+                            sizes="(max-width: 768px) 50vw, 33vw"
+                            alt={pic.alt}
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover opacity-0 transition-[opacity,transform] duration-300 group-hover:scale-105"
+                        />
+                        <span
+                            class="image-status absolute inset-0 flex items-center justify-center"
+                            aria-hidden="true"
+                        >
+                            <span class="gallery-image-loader" />
+                        </span>
+                    </a>
+                ))
+            }
+        </div>
+
+        <!-- Botón de lotes: inserta 10 fotos más solo al pulsarlo -->
+        <div class="flex justify-center pt-6">
+            <button
+                id="gallery-more"
+                class="cursor-pointer text-sm font-bold tracking-widest uppercase rounded-2xl border border-zinc-500/30 px-6 py-2.5 text-gray-300 hover:text-white hover:border-amber-500/60 transition-colors"
+            >
+                Ver 15 más
+            </button>
+        </div>
+
+        <!-- URLs de las fotos restantes, como texto puro (no se descargan) -->
+        <script
+            is:inline
+            type="application/json"
+            id="gallery-data"
+            set:html={JSON.stringify(PICTURES)}
+        />
+    </div>
+
+    <script>
+        const PAGE_SIZE = 15;
+        const SIZES = "(max-width: 768px) 50vw, 33vw";
+        const PHOTOSWIPE_CDN =
+            "https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js";
+        const LIGHTBOX_CDN =
+            "https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js";
+
+        interface PhotoSwipeLightboxInstance {
+            init(): void;
+        }
+
+        interface PhotoSwipeLightboxConstructor {
+            new (options: {
+                gallery: string;
+                children: string;
+                pswpModule: () => Promise<unknown>;
+            }): PhotoSwipeLightboxInstance;
+        }
+
+        const grid = document.getElementById("gallery")!;
+        const moreBtn = document.getElementById("gallery-more")!;
+        const tabs = document.querySelectorAll<HTMLButtonElement>(".tab-btn");
+        const data: PictureJson[] = JSON.parse(
+            document.getElementById("gallery-data")?.textContent ?? "[]",
+        );
+
+        interface PictureJson {
+            category: string;
+            thumb: string;
+            srcset: string;
+            large: string;
+            width: number;
+            height: number;
+            alt: string;
+        }
+
+        async function initializeLightbox() {
+            const { default: PhotoSwipeLightbox } = (await import(
+                /* @vite-ignore */ LIGHTBOX_CDN
+            )) as { default: PhotoSwipeLightboxConstructor };
+
+            // Lee los enlaces del DOM al hacer clic, incluidos los lotes agregados.
+            const lightbox = new PhotoSwipeLightbox({
+                gallery: "#gallery",
+                children: "a.gallery-item",
+                pswpModule: () => import(/* @vite-ignore */ PHOTOSWIPE_CDN),
+            });
+            lightbox.init();
+        }
+
+        initializeLightbox();
+
+        let activeFilter = "all";
+        let visibleCount = PAGE_SIZE;
+
+        function renderItem(pic: PictureJson): HTMLElement {
+            const link = document.createElement("a");
+            link.className =
+                "gallery-item group relative mb-4 block break-inside-avoid overflow-hidden rounded-lg bg-neutral-900";
+            link.style.aspectRatio = `${pic.width} / ${pic.height}`;
+            link.href = pic.large;
+            link.target = "_blank";
+            link.setAttribute("aria-busy", "true");
+            link.dataset.pswpSrc = pic.large;
+            link.dataset.pswpWidth = String(pic.width);
+            link.dataset.pswpHeight = String(pic.height);
+            link.dataset.category = pic.category;
+
+            const img = document.createElement("img");
+            img.className =
+                "w-full h-full object-cover opacity-0 transition-[opacity,transform] duration-300 group-hover:scale-105";
+            img.sizes = SIZES;
+            img.alt = pic.alt;
+            img.loading = "lazy";
+            img.decoding = "async";
+
+            const status = document.createElement("span");
+            status.className =
+                "image-status absolute inset-0 flex items-center justify-center";
+            status.setAttribute("aria-hidden", "true");
+
+            const spinner = document.createElement("span");
+            spinner.className = "gallery-image-loader";
+            status.append(spinner);
+
+            link.append(img, status);
+            watchImage(img, link, status);
+            img.srcset = pic.srcset;
+            img.src = pic.thumb;
+            return link;
+        }
+
+        function watchImage(
+            img: HTMLImageElement,
+            link: HTMLAnchorElement,
+            status: HTMLElement,
+        ) {
+            const loaded = () => {
+                link.setAttribute("aria-busy", "false");
+                img.classList.replace("opacity-0", "opacity-100");
+                status.remove();
+            };
+            const failed = () => {
+                link.setAttribute("aria-busy", "false");
+            };
+
+            img.addEventListener("load", loaded, { once: true });
+            img.addEventListener("error", failed, { once: true });
+
+            if (img.complete) {
+                if (img.naturalWidth > 0) loaded();
+                else failed();
+            }
+        }
+
+        grid.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+            const link = img.closest<HTMLAnchorElement>("a.gallery-item");
+            const status = link?.querySelector<HTMLElement>(".image-status");
+            if (link && status) watchImage(img, link, status);
+        });
+
+        function render() {
+            const list = data.filter(
+                (pic) =>
+                    activeFilter === "all" || pic.category === activeFilter,
+            );
+            grid.replaceChildren(
+                ...list.slice(0, visibleCount).map(renderItem),
+            );
+            moreBtn.classList.toggle("hidden", visibleCount >= list.length);
+        }
+
+        // Botón "Ver 10 más"
+        moreBtn.addEventListener("click", () => {
+            visibleCount += PAGE_SIZE;
+            render();
+        });
+
+        // Pestañas de filtrado (re-render vuelve a mostrar solo 10)
+        tabs.forEach((button) => {
+            button.addEventListener("click", () => {
+                const selected = button.getAttribute("data-category");
+
+                tabs.forEach((b) => {
+                    b.classList.remove(
+                        "text-amber-500",
+                        "border-b-2",
+                        "border-amber-500",
+                    );
+                    b.classList.add("text-gray-400");
+                });
+                button.classList.remove("text-gray-400");
+                button.classList.add(
+                    "text-amber-500",
+                    "border-b-2",
+                    "border-amber-500",
+                );
+
+                activeFilter = selected ?? "all";
+                visibleCount = PAGE_SIZE; // reset al cambiar de categoría
+                render();
+            });
+        });
+    </script>
+</section>
+
+<style is:global>
+    .gallery-image-loader {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid transparent;
+        border-top-color: #fff;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: gallery-loader-rotation 1s linear infinite;
+    }
+
+    .gallery-image-loader::after {
+        position: absolute;
+        inset: -3px;
+        box-sizing: border-box;
+        border: 3px solid transparent;
+        border-bottom-color: #ff3d00;
+        border-left-color: transparent;
+        border-radius: 50%;
+        content: "";
+    }
+
+    @keyframes gallery-loader-rotation {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gallery-image-loader {
+            animation: none;
+        }
+    }
+</style>
