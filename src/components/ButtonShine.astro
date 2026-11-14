@@ -9,10 +9,11 @@ const {
     href = "#",
     text = "Contáctame Ahora",
     class: className = "",
+    ...rest
 } = Astro.props;
 ---
 
-<a href={href} class={`btn-shine group ${className}`}>
+<a href={href} class={`btn-shine group ${className}`} {...rest}>
     <span>{text}</span>
     <slot />
 </a>

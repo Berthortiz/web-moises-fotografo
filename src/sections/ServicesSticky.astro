@@ -1,43 +1,45 @@
 ---
+import { Picture } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import ButtonPrimary from "../components/ButtonPrimary.astro";
 import ButtonShine from "../components/ButtonShine.astro";
+import { whatsappLink } from "../utils/whatsapp";
+import imagenBodas from "../assets/pagina web fotos y video/web bodas/D&O-459.jpg";
+import imagenEventos from "../assets/pagina web fotos y video/web eventos/DSC00083-Mejorado-NR.jpg";
+import imagenQuince from "../assets/pexels-jorgegonzalez-34448535.jpg";
+import imagenRealState from "../assets/pagina web fotos y video/web realstate/DSC01319.JPG";
+import imagenPhotoshoot from "../assets/pagina web fotos y video/web photoshoot/DSC06344.JPG";
+import imagenLifestyle from "../assets/pagina web fotos y video/web photoshoot/DSC05356-Mejorado-NR.jpg";
 
 const services = [
   {
-    title: "Bodas y Eventos Románticos",
-    image:
-      "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=900&q=80",
+    title: "Bodas",
+    image: imagenBodas,
     description: `Cobertura fotográfica para bodas, engagements y celebraciones íntimas en Miami, Fort Lauderdale, Coral Gables y todo el sur de Florida.`,
   },
   {
-    title: "Quinceañeras y Celebraciones Familiares",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80",
+    title: "Quinceaños",
+    image: imagenQuince,
     description: `Sesiones y cobertura para 15 años, cumpleaños, reuniones familiares y momentos que merecen quedarse para siempre.`,
   },
   {
-    title: "Real Estate y Listings Inmobiliarios",
-    image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80",
+    title: "Real Estate",
+    image: imagenRealState,
     description: `Fotografía profesional para propiedades, alquileres, vendedores, desarrollos y agentes inmobiliarios con estilo premium.`,
   },
   {
-    title: "Conciertos, Festivales y Eventos en Vivo",
-    image:
-      "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=900&q=80",
+    title: "Eventos y Conciertos",
+    image: imagenEventos,
     description: `Captura la energía, emoción y atmósfera de conciertos, fiestas, festivales y eventos de gran escala en Miami.`,
   },
   {
-    title: "Retratos y Branding Personal",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    title: "Photoshoot",
+    image: imagenPhotoshoot,
     description: `Retratos corporativos, lifestyle, headshots y sesiones personales con una estética elegante y auténtica.`,
   },
   {
-    title: "Editorial, Lifestyle y Viajes",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+    title: "Lifestyle",
+    image: imagenLifestyle,
     description: `Imágenes para marcas, editoriales, viajes y contenido visual premium que transmite lujo, estilo y presencia.`,
   },
 ];
@@ -48,28 +50,29 @@ const services = [
   class="w-full h-fit flex md:items-center relative text-gray-600 body-font md:py-20"
 >
   <div
-    class=`flex flex-col md:flex-row md:gap-10 lg:max-w-7xl xl:gap-10  mx-auto py-10 px-6 md:px-14 items-center relative z-10 `
+    class=`flex flex-col md:flex-row md:gap-10 lg:max-w-7xl xl:gap-10  mx-auto py-10 md:py-1 px-6 md:px-14 items-center relative z-10 `
   >
-    <!-- col-1 -->
+    <!-- col-1 : sticky de 100dvh con contenido centrado.
+         Nunca invade lo de arriba: el sticky viaja dentro de su contenedor
+         y el centrado lo hace justify-center, no translate(). -->
     <div
-      class="self-start w-full md:sticky top-15 xl:top-40 flex flex-col md:w-2/4 md:justify-start md:items-start md:text-left mb-16 md:mb-0 items-center text-center"
+      class="w-full flex flex-col mb-16 md:mb-40 items-center text-center servicios-copy gap-4 md:sticky md:top-0 md:h-dvh md:w-2/4 md:self-start md:justify-center md:items-start md:text-left"
     >
       <span
-        class="btn-item-service text-[1em]
+        class="btn-item-service text-[1.4em]
          px-3 py-1
-         rounded-2xl
+         rounded-3xl
          
          border-[0.1rem]
          font-light"
       >
-        • Servicio destacado
+        • Mis Servicios
       </span>
       <h2
-        class="title-font font-serif text-5xl sm:text-5xl md:text-5xl lg:text-6xl mb-4 pt-5 font-bold text-(--color-brand-secundary)"
+        class="max-w-3xl text-center md:text-start font-serif text-4xl font-normal leading-[1.05] text-white sm:text-5xl lg:text-6xl"
       >
-        <span class="gradiente-title- font-serif"></span>Back & white Moments
+        Imágenes para volver a sentir cada instante.
       </h2>
-
       <p
         class="md:max-w-[58ch] mb-8 leading-relaxed font-normal text-[1em] text-gray-500"
       >
@@ -94,24 +97,36 @@ const services = [
       {
         services.map((service) => {
           return (
-            <section class="flex flex-col gap-3 overflow-hidden rounded-2xl bg-[#D5D9DA10] p-0 text-(--color-brand-secundary)">
-              <img
+            <a
+              href={whatsappLink(service.title)}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Contratar servicio de ${service.title} por WhatsApp`}
+              class="card-servicio group relative flex flex-col gap-3 overflow-hidden rounded-2xl p-0 text-(--color-brand-secundary)"
+            >
+              <Picture
                 src={service.image}
                 alt={service.title}
-                class="h-52 w-full object-cover"
+                class="h-72 sm:h-80 md:h-96 w-full object-cover object-top transition-[filter] duration-300 group-hover:brightness-110"
+                formats={["avif", "webp"]}
+                widths={[384, 640, 960]}
+                sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 3rem)"
+                quality={75}
                 loading="lazy"
                 decoding="async"
               />
 
-              <div class="flex flex-col items-center gap-2 p-8 pt-5 text-center md:items-start md:text-left">
-                <h2 class="text-2xl font-medium lg:text-lg xl:text-2xl ">
-                  {service.title}
-                </h2>
-                <p class="text-(--color-text-primary) text-base lg:text-sm">
-                  {service.description}
-                </p>
-              </div>
-            </section>
+              {/* Overlay oscuro parejo: misma opacidad en toda la tarjeta
+                  para que la foto y el título se lean igual en todo el marco */}
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-black/60"
+              />
+
+              <h2 class="absolute inset-0 flex items-center justify-center px-6 text-center text-2xl font-medium leading-snug text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.45)] lg:text-2xl xl:text-3xl">
+                {service.title}
+              </h2>
+            </a>
           );
         })
       }
@@ -130,3 +145,52 @@ const services = [
       );
   }
 </style>
+
+<script>
+    // Animación sincronizada con scroll (mismo patrón que Hero/SkiperParallax):
+    // col-1 (badge → título → descripción → botón) en cascada,
+    // y cada tarjeta de la "galería" aparece cuando entra en pantalla.
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.getElementById("servicios");
+
+    if (
+        section &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+        // 1) Copia sticky: los elementos principales uno detrás de otro
+        const copy = section.querySelector(".servicios-copy");
+        if (copy) {
+            gsap.from(copy.children, {
+                autoAlpha: 0,
+                y: 28,
+                duration: 0.7,
+                ease: "power3.out",
+                stagger: 0.18, // cada elemento entra tras el anterior
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 70%", // cuando la sección se acerca al viewport
+                },
+            });
+        }
+
+        // 2) "Galería": progresivo con el scroll — cada tarjeta se
+        //    revela al entrar, una tras otra, sin saltarse ninguna.
+        section.querySelectorAll(".card-servicio").forEach((card) => {
+            gsap.from(card, {
+                autoAlpha: 0,
+                y: 48,
+                scale: 0.97,
+                duration: 0.7,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 85%",
+                },
+            });
+        });
+    }
+</script>

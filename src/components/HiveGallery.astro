@@ -1,27 +1,70 @@
----
-const modules = import.meta.glob(
+
+
+import { getImage, type ImageMetadata } from "astro:assets";
+
+const modules = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/pagina web fotos y video/web photoshoot/*.{jpg,JPG,jpeg,JPEG}",
   { eager: true },
 );
 
-const photos = Object.values(modules)
-  .map((m) => (m as { default: string }).default)
-  .sort();
+const modulesFeatured = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/imagenes-destacadas/*.{jpg,JPG,jpeg,JPEG}",
+  { eager: true },
+);
 
 const CELL_COUNT = 24;
-const gallery: string[] = [];
+const CELL_SIZES = "(max-width: 1024px) 22vw, 250px"; // círculos ~70/220px
 
-if (photos.length <= CELL_COUNT) {
-  gallery.push(...photos);
-} else {
-  for (let i = 0; i < CELL_COUNT; i++) {
-    gallery.push(photos[Math.floor((i * photos.length) / CELL_COUNT)]);
-  }
+interface Cell {
+  thumb: string;
+  srcset: string;
+  alt: string;
 }
 
-// Si no hay suficientes fotos, se rellena repitiendo las disponibles
-while (gallery.length < CELL_COUNT && photos.length > 0) {
-  gallery.push(photos[gallery.length % photos.length]);
+
+const photos = [...Object.values(modules), ...Object.values(modulesFeatured)]
+  .map((m) => m.default)
+  .filter(Boolean)
+  .sort((a, b) =>
+    a.src.split("/").pop()!.localeCompare(b.src.split("/").pop()!),
+  );
+
+const gallery: Cell[] = [];
+
+if (photos.length > 0) {
+  // Submuestreo con paso uniforme: 24 fotos únicas (si hay suficientes)
+  const selected: ImageMetadata[] = [];
+  if (photos.length <= CELL_COUNT) {
+    selected.push(...photos);
+  } else {
+    for (let i = 0; i < CELL_COUNT; i++) {
+      selected.push(photos[Math.floor((i * photos.length) / CELL_COUNT)]!);
+    }
+  }
+
+  // Igual que gallery.ts: 480px (1x) + 960px (2x retina), WebP
+  const cells = await Promise.all(
+    selected.map(async (meta, i) => {
+      const thumb1x = await getImage({
+        src: meta,
+        width: 480,
+        format: "webp",
+        quality: 75,
+      });
+      const thumb2x = await getImage({
+        src: meta,
+        width: 960,
+        format: "webp",
+        quality: 75,
+      });
+      return {
+        thumb: thumb1x.src,
+        srcset: `${thumb1x.src} 480w, ${thumb2x.src} 960w`,
+        alt: `Foto ${i + 1} de la galería de Moisés Magariño`,
+      };
+    }),
+  );
+  gallery.push(...cells);
 }
 
 // Filas de la colmena: escala (k) de cada celda, igual que el HTML original
@@ -51,9 +94,9 @@ const rows: { k: number }[][] = [
 let index = 0;
 const hive = rows.map((row) => {
   return row.map(() => {
-    const src = gallery[index % Math.max(gallery.length, 1)] ?? "";
+    const cell = gallery[index % Math.max(gallery.length, 1)];
     index++;
-    return { src };
+    return { cell };
   });
 });
 ---
@@ -64,11 +107,16 @@ const hive = rows.map((row) => {
       {
         hive.map((row, i) => (
           <div class="row">
-            {row.map((cell, j) => (
-              <div
-                style={`--i:${i * row.length + j};--k:${rows[i][j].k};background-image:url('${cell.src}')`}
-                role="img"
-                aria-label={`Foto ${i * row.length + j + 1}`}
+            {row.map(({ cell }, j) => (
+              <img
+                class="cell"
+                style={`--k:${rows[i][j].k}`}
+                src={cell?.thumb}
+                srcset={cell?.srcset}
+                sizes={CELL_SIZES}
+                alt={cell?.alt ?? ""}
+                loading="lazy"
+                decoding="async"
               />
             ))}
           </div>
@@ -80,7 +128,7 @@ const hive = rows.map((row) => {
 
 <style>
   .hive-section {
-    background: #111;
+    /* background: #111; */
     min-height: 100vh;
     display: grid;
     place-items: center;
@@ -117,32 +165,37 @@ const hive = rows.map((row) => {
   .row + .row {
     margin-top: calc((var(--s) + var(--g)) * 0.866 - var(--s));
   }
-  .row div {
+  .row .cell {
+    display: block;
     width: var(--s);
     height: var(--s);
     border-radius: 50%;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-color: #222; /* respaldo si la imagen no carga */
+    object-fit: cover;
+    object-position: center;
     transform: scale(var(--k));
     transition:
       transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.2),
+      border-radius 0.3s ease,
       filter 0.3s ease,
       box-shadow 0.3s ease;
     cursor: pointer;
   }
 
-  /* Previsualización grande al pasar el cursor */
-  .row div:hover {
+  /* Previsualización grande al pasar el cursor: se quita el recorte
+     circular y la foto se ve COMPLETA en su relación de aspecto original
+     (contain). Las bandas sobrantes de la caja se funden en negro. */
+  .row .cell:hover {
+    border-radius: 0;
+    object-fit: contain;
+    /* background: #000; */
     transform: scale(2.2);
     position: relative;
     z-index: 10;
-    box-shadow:
+    /* box-shadow:
       0 8px 30px rgba(0, 0, 0, 0.7),
-      0 0 0 2px rgba(255, 255, 255, 0.85);
+      0 0 0 2px rgba(255, 255, 255, 0.85); */
   }
-  .hive:hover .row div:not(:hover) {
+  .hive:hover .row .cell:not(:hover) {
     filter: brightness(0.55);
   }
 
@@ -186,13 +239,16 @@ const hive = rows.map((row) => {
     .row + .row {
       margin-top: 0;
     }
-    .row div {
+    .row .cell {
       display: inline-block;
       margin: 0 calc(var(--g) / 2) calc(var(--p) * 0.866 - var(--s));
       transform: none; /* todos del mismo tamaño */
     }
-    .row div:hover,
-    .row div:active {
+    .row .cell:hover,
+    .row .cell:active {
+      border-radius: 0;
+      object-fit: contain;
+      background: #000;
       transform: scale(1.7);
       position: relative;
       z-index: 10;

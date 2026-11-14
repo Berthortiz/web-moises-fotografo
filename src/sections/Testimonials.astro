@@ -1,7 +1,17 @@
 ---
 import { Icon } from "astro-icon/components";
+import mariaMartellAvatar from "../assets/Captura de pantalla 2026-11-14 165433.png";
 
-const testimonials = [
+interface Testimonial {
+  description: string;
+  name: string;
+  job: string;
+  srcImg: string;
+  instagramUrl: string;
+  isQuote?: boolean;
+}
+
+const testimonials: Testimonial[] = [
   {
     description:
       "Capturó cada momento con naturalidad. Al ver las fotos, volvemos a sentir la emoción de ese día.",
@@ -26,12 +36,21 @@ const testimonials = [
     srcImg: "/images/avatars/uifaces-human-avatar%20(7).jpg",
     instagramUrl: "#",
   },
+  {
+    description:
+      "Confié en Moisés para fotografiar a mi hija y guardar ese momento tan especial en imágenes.",
+    name: "Maria Martell",
+    job: "Realtor",
+    srcImg: mariaMartellAvatar.src,
+    instagramUrl: "https://www.instagram.com/realtormariamartell/",
+    isQuote: false,
+  },
 ];
 ---
 
 <section
   id="testimonios"
-  class="testimonials-section w-full text-gray-200 body-font md:py-20"
+  class="testimonials-section w-full text-gray-200 body-font pt-20 lg:pt-40 md:py-20"
 >
   <div
     class="mx-auto flex h-fit w-full max-w-7xl flex-col items-center px-6 py-10 md:gap-5 md:px-14"
@@ -51,9 +70,8 @@ const testimonials = [
       <p
         class="mb-1 text-[1.1em] font-normal leading-relaxed text-gray-300 md:mb-8 md:max-w-[75ch]"
       >
-        He tenido el privilegio de trabajar con personas extraordinarias. Más
-        que clientes, somos aliados de proyecto; estas son sus palabras sobre el
-        camino recorrido.
+        He tenido el privilegio de trabajar con personas extraordinarias y
+        crear imágenes para momentos importantes de sus vidas.
       </p>
     </header>
 
@@ -105,19 +123,25 @@ const testimonials = [
                         </span>
                       </div>
                     </div>
-                    <blockquote class="text-gray-300">
-                      <div
-                        class="flex gap-1 pb-3 text-[#c5c9cc]"
-                        aria-label="5 estrellas"
-                      >
-                        <Icon name="star" size={20} />
-                        <Icon name="star" size={20} />
-                        <Icon name="star" size={20} />
-                        <Icon name="star" size={20} />
-                        <Icon name="star" size={20} />
-                      </div>
-                      <p>"{testimonial.description}"</p>
-                    </blockquote>
+                    <div class="text-gray-300">
+                      {testimonial.isQuote === false ? (
+                        <p>{testimonial.description}</p>
+                      ) : (
+                        <blockquote>
+                          <div
+                            class="flex gap-1 pb-3 text-[#c5c9cc]"
+                            aria-label="5 estrellas"
+                          >
+                            <Icon name="star" size={20} />
+                            <Icon name="star" size={20} />
+                            <Icon name="star" size={20} />
+                            <Icon name="star" size={20} />
+                            <Icon name="star" size={20} />
+                          </div>
+                          <p>"{testimonial.description}"</p>
+                        </blockquote>
+                      )}
+                    </div>
                   </figcaption>
                 </figure>
               </a>

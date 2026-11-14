@@ -22,6 +22,14 @@ import { GALLERY as Gallery, PICTURES } from "../data/gallery";
 const INITIAL_COUNT = 15;
 const firstBatch = PICTURES.slice(0, INITIAL_COUNT);
 const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
+
+// Categorías que no tienen pestaña propia en el filtro: se agrupan
+// bajo una única pestaña "Otros". Sus galerías dedicadas en
+// /galeria/<slug>/ siguen existiendo; esto solo afecta al filtro.
+const FILTER_OTHERS = ["Spa", "Real Estate", "Producto"];
+const filterTabs = Gallery.filter(
+    ({ label }) => !FILTER_OTHERS.includes(label),
+);
 ---
 
 <link
@@ -38,7 +46,7 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
             <span class="gradiente-title-hero"> Galeria</span>
         </h1>
         <p
-            class="mx-auto w-full max-w-[75ch] text-center leading-7 text-gray-300 sm:text-lg"
+            class="galeria-desc mx-auto w-full max-w-[75ch] text-center leading-7 text-gray-300 sm:text-lg"
         >
             Fotografía profesional, Convierte cada momento en imágenes con alma
             que hacen volver a sentir cada instante.
@@ -47,14 +55,14 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
         <!-- Pestañas de Filtrado -->
         <div
-            class="flex flex-wrap justify-center gap-6 mb-8 text-sm font-bold tracking-widest"
+            class="galeria-filtro flex flex-wrap justify-center gap-6 mb-8 text-sm font-bold tracking-widest"
         >
             <button
                 class="tab-btn cursor-pointer text-amber-500 border-b-2 border-amber-500 pb-1"
                 data-category="all">All</button
             >
             {
-                Gallery.map(({ label }) => (
+                filterTabs.map(({ label }) => (
                     <button
                         class="tab-btn cursor-pointer text-gray-400 hover:text-white pb-1"
                         data-category={label}
@@ -63,24 +71,11 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
                     </button>
                 ))
             }
+            <button
+                class="tab-btn cursor-pointer text-gray-400 hover:text-white pb-1"
+                data-category="otros">Otros</button
+            >
         </div>
-
-        <nav
-            aria-label="Galerías completas por categoría"
-            class="mb-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm text-gray-300"
-        >
-            <span class="text-gray-500">Ver todas las fotos:</span>
-            {
-                Gallery.map(({ label, slug }) => (
-                    <a
-                        href={`/galeria/${slug}/`}
-                        class="underline decoration-white/30 underline-offset-4 transition-colors hover:text-amber-400"
-                    >
-                        {label}
-                    </a>
-                ))
-            }
-        </nav>
 
         <!-- Rejilla Masonry (columnas CSS): solo el primer lote existe en el DOM -->
         <div id="gallery" class="columns-2 gap-4 md:columns-3">
@@ -118,13 +113,30 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
         </div>
 
         <!-- Botón de lotes: inserta 10 fotos más solo al pulsarlo -->
-        <div class="flex justify-center pt-6">
+        <div class="flex justify-center pt-6 flex-col items-center gap-6">
             <button
                 id="gallery-more"
                 class="cursor-pointer text-sm font-bold tracking-widest uppercase rounded-2xl border border-zinc-500/30 px-6 py-2.5 text-gray-300 hover:text-white hover:border-amber-500/60 transition-colors"
             >
                 Ver 15 más
             </button>
+
+            <nav
+                aria-label="Galerías completas por categoría"
+                class="mb-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm text-gray-300"
+            >
+                <span class="text-gray-500">Ver todas las fotos de:</span>
+                {
+                    Gallery.map(({ label, slug }) => (
+                        <a
+                            href={`/galeria/${slug}/`}
+                            class="underline decoration-white/30 underline-offset-4 transition-colors hover:text-amber-400"
+                        >
+                            {label}
+                        </a>
+                    ))
+                }
+            </nav>
         </div>
 
         <!-- URLs de las fotos restantes, como texto puro (no se descargan) -->
@@ -139,6 +151,12 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
     <script>
         const PAGE_SIZE = 15;
         const SIZES = "(max-width: 768px) 50vw, 33vw";
+        // Debe coincidir con FILTER_OTHERS en el frontmatter.
+        const OTROS_CATEGORIES = new Set([
+            "Spa",
+            "Real Estate",
+            "Producto",
+        ]);
         const PHOTOSWIPE_CDN =
             "https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js";
         const LIGHTBOX_CDN =
@@ -159,8 +177,20 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
         const grid = document.getElementById("gallery")!;
         const moreBtn = document.getElementById("gallery-more")!;
         const tabs = document.querySelectorAll<HTMLButtonElement>(".tab-btn");
-        const data: PictureJson[] = JSON.parse(
-            document.getElementById("gallery-data")?.textContent ?? "[]",
+        // Baraja el orden una vez por visita. El botón "Ver 15 más" consume
+        // esta misma cola, así que nunca repite fotos ya mostradas.
+        function shuffle<T>(items: T[]): T[] {
+            for (let i = items.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [items[i], items[j]] = [items[j]!, items[i]!];
+            }
+            return items;
+        }
+
+        const data: PictureJson[] = shuffle(
+            JSON.parse(
+                document.getElementById("gallery-data")?.textContent ?? "[]",
+            ),
         );
 
         interface PictureJson {
@@ -259,9 +289,12 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
         });
 
         function render() {
-            const list = data.filter(
-                (pic) =>
-                    activeFilter === "all" || pic.category === activeFilter,
+            const list = data.filter((pic) =>
+                activeFilter === "all"
+                    ? true
+                    : activeFilter === "otros"
+                      ? OTROS_CATEGORIES.has(pic.category)
+                      : pic.category === activeFilter,
             );
             grid.replaceChildren(
                 ...list.slice(0, visibleCount).map(renderItem),
@@ -269,7 +302,11 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
             moreBtn.classList.toggle("hidden", visibleCount >= list.length);
         }
 
-        // Botón "Ver 10 más"
+        // Primer render aleatorio: sustituye el lote que vino en el HTML
+        // (SSR/SEO) por las primeras 15 fotos del orden barajado.
+        render();
+
+        // Botón "Ver 15 más"
         moreBtn.addEventListener("click", () => {
             visibleCount += PAGE_SIZE;
             render();
@@ -340,3 +377,59 @@ const SIZES = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw";
         }
     }
 </style>
+
+<script>
+    // Entrada secuencial sincronizada al scroll (scrub): al BAJAR la
+    // sección la animación avanza (título → descripción → filtro →
+    // galería) y al SUBIR retrocede, entrando/saliendo con el scroll.
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.getElementById("galeria");
+
+    if (
+        section &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+        const timeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: section,
+                start: "top+=100 95%", // 100px más abajo de donde empezaba
+                end: "top+=100 -5%",
+                scrub: 1, // ligado al scroll, ligero suavizado, reversible
+                invalidateOnRefresh: true,
+            },
+        });
+
+        // Secuencia: título → descripción → pestañas del filtro → rejilla
+        timeline
+            .from(section.querySelector("h1"), {
+                autoAlpha: 0,
+                y: 36,
+                duration: 0.35,
+                ease: "power2.out",
+            })
+            .from(section.querySelector(".galeria-desc"), {
+                autoAlpha: 0,
+                y: 28,
+                duration: 0.3,
+                ease: "power2.out",
+            })
+            .from(section.querySelectorAll(".galeria-filtro .tab-btn"), {
+                autoAlpha: 0,
+                y: 20,
+                duration: 0.25,
+                stagger: 0.04, // las pestañas caen una tras otra
+                ease: "power2.out",
+            })
+            .from(section.querySelectorAll("#gallery .gallery-item"), {
+                autoAlpha: 0,
+                y: 44,
+                duration: 0.6,
+                stagger: 0.05, // las fotos aparecen progresivamente
+                ease: "power2.out",
+            });
+    }
+</script>

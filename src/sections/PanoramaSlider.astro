@@ -1,0 +1,190 @@
+---
+import { getImage, type ImageMetadata } from "astro:assets";
+
+// Fotos destacadas de src/assets/imagenes-destacadas/
+// Se optimizan en el build: miniatura WebP 480px + 960px (retina).
+const modules = import.meta.glob<{ default: ImageMetadata }>(
+    "../assets/imagenes-destacadas/*.{jpg,jpeg,JPG,JPEG,png,PNG}",
+    { eager: true },
+);
+
+// Orden natural por nombre de archivo, para que el orden sea estable.
+const featured = Object.entries(modules)
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .map(([, mod]) => mod.default);
+
+const slides = await Promise.all(
+    featured.map(async (image, index) => {
+        const thumb1x = await getImage({
+            src: image,
+            width: 480,
+            format: "webp",
+            quality: 75,
+        });
+        const thumb2x = await getImage({
+            src: image,
+            width: 960,
+            format: "webp",
+            quality: 75,
+        });
+
+        return {
+            thumb: thumb1x.src,
+            srcset: `${thumb1x.src} 480w, ${thumb2x.src} 960w`,
+            width: image.width,
+            height: image.height,
+            alt: `Fotografía destacada ${index + 1}`,
+        };
+    }),
+);
+---
+
+<section
+    class="panorama-section w-full sm:py-20 pt-20 pb-30 lg:pb-50 lg:pt-10"
+    aria-label="Galería panorámica de sesiones fotográficas"
+>
+    <div class="mx-auto max-w-7xl px-6 lg:px-(--padding-all-web)">
+        <header
+            class="panorama-intro mb-10 flex flex-col items-center gap-5 text-center lg:mb-12"
+        >
+            <div class="flex flex-col items-center text-center">
+                <p
+                    class="panorama-kicker mb-5 text-xs font-semibold uppercase text-gray-100 bg-gray-700/40 py-3 px-4 rounded-2xl"
+                >
+                    Fotos Destacadas
+                </p>
+
+                <h2
+                    class="title-font font-serif text-5xl sm:text-5xl md:text-5xl lg:text-6xl mb-4 pt-5 font-bold text-(--color-brand-secundary)"
+                >
+                    <span class="gradiente-title- font-serif"></span>Un paseo en
+                    360°
+                </h2>
+            </div>
+            <p
+                class="mx-auto w-full max-w-2xl text-center text-base leading-7 text-gray-300 sm:text-lg"
+            >
+                Una galería curva que te rodea. Arrastra para girar y recorre
+                las sesiones como si estuvieras dentro de ellas.
+            </p>
+        </header>
+    </div>
+
+    <div
+        class="swiper swiper-3d"
+        id="panorama-swiper"
+        data-panorama-slider
+    >
+        <div class="swiper-wrapper">
+            {
+                slides.map((picture, i) => (
+                    <div class="swiper-slide panorama-slide">
+                        <img
+                            src={picture.thumb}
+                            srcset={picture.srcset}
+                            sizes="(max-width: 768px) 72vw, 420px"
+                            alt={picture.alt}
+                            width={picture.width}
+                            height={picture.height}
+                            loading={i === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            draggable="false"
+                        />
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .panorama-kicker {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    #panorama-swiper {
+        width: 100%;
+        cursor: grab;
+        padding-bottom: 20px;
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 8%,
+            black 92%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 8%,
+            black 92%,
+            transparent 100%
+        );
+    }
+
+    #panorama-swiper:active {
+        cursor: grabbing;
+    }
+
+    #panorama-swiper :global(.swiper-slide),
+    .panorama-slide {
+        width: min(72vw, 420px);
+        aspect-ratio: 3 / 4;
+    }
+
+    .panorama-slide {
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+
+    .panorama-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 18px;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background-color: #17181c;
+        user-select: none;
+    }
+</style>
+
+<script>
+    import Swiper from "swiper";
+    import { Keyboard, Autoplay } from "swiper/modules";
+    import PanoramaEffect from "../scripts/panorama-effect";
+
+    document
+        .querySelectorAll<HTMLElement>("[data-panorama-slider]")
+        .forEach((el) => {
+            if (el.dataset.panoramaInit) return;
+            el.dataset.panoramaInit = "true";
+
+            new Swiper(el, {
+                modules: [PanoramaEffect, Keyboard, Autoplay],
+                effect: "panorama",
+                panoramaEffect: {
+                    rotate: 22,
+                    limitProgress: 3,
+                    minOpacity: 0,
+                },
+                speed: 700,
+                centeredSlides: true,
+                slidesPerView: "auto",
+                spaceBetween: 40,
+                loop: true,
+                grabCursor: true,
+                autoplay: {
+                    delay: 3200,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                },
+                keyboard: {
+                    enabled: true,
+                    onlyInViewport: true,
+                },
+            });
+        });
+</script>

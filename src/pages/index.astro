@@ -18,11 +18,14 @@ import ServicesCards from "../sections/ServicesCards.astro";
 import About from "../sections/About.astro";
 import GalleryFilter from "../sections/GalleryFilter.astro";
 import GallerySwiper from "../sections/GallerySwiper.astro";
+import PanoramaSlider from "../sections/PanoramaSlider.astro";
 import AboutTwo from "../sections/AboutTwo.astro";
 import LinksSecction from "../sections/LinksSecction.astro";
 import Section3Alert from "../sections/Section3Alert.astro";
 import SliderHero from "../sections/SliderHero.astro";
 import HiveGallery from "../components/HiveGallery.astro";
+import SkiperParallax from "../components/SkiperParallax.astro";
+import BlackWhiteMoments from "../sections/BlackWhiteMoments.astro";
 
 const title = "Fotógrafo profesional & Filmmaker | Moisés Magariño";
 const description =
@@ -32,12 +35,18 @@ const description =
 <Layout title={title} description={description}>
 	<Hero />
 	<GalleryFilter />
-	<GallerySwiper />
+	<!-- <GallerySwiper /> -->
+	<PanoramaSlider />
+	
 	<AboutTwo />
-	<HiveGallery />
+	<!-- <HiveGallery /> -->
 	<ServicesSticky />
 	<!-- <Section3Alert /> -->
+	<section class="relative">
+		<SkiperParallax />
+	</section>
 	<Testimonials />
+	<BlackWhiteMoments />
 
 	<LinksSecction />
 

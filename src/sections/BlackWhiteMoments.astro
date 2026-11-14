@@ -1,0 +1,248 @@
+---
+// Black & White Moments — experiencia "Live Portrait Studio".
+// Retratos editoriales en blanco y negro, impresión al instante y
+// firma en vivo de los invitados. Portado de HTML estático a Astro:
+// - El CTA usa el util de WhatsApp del proyecto (no hay ancla #cotizar).
+// - El CSS vive como global namespaced bajo .bwm porque las tarjetas
+//   se inyectan por JS (innerHTML) y el scoping de Astro no las cubriría.
+import { whatsappLink } from "../utils/whatsapp";
+import imagenRetrato from "../assets/pexels-kawerodriguess-17529931.jpg";
+
+const ctaHref = whatsappLink("Black & White Moments para mi evento");
+---
+
+<section class="bwm" id="black-white-moments" aria-labelledby="bwm-title">
+  <div class="bwm__grain" aria-hidden="true"></div>
+  <!-- Fundidos de borde: disuelven el fondo y las luces hacia el fondo del body -->
+  <div class="bwm__fade bwm__fade--top" aria-hidden="true"></div>
+  <div class="bwm__fade bwm__fade--bottom" aria-hidden="true"></div>
+  <div class="bwm__wrap">
+    <div class="bwm__top pb-20">
+      <div>
+        <p class="bwm__eyebrow">Servicio Destacado</p>
+        <h2 id="bwm-title">Black &amp; White Moments</h2>
+        <p class="bwm__lead">
+          Llevamos un estudio de fotografía profesional directamente a tu evento. Capturamos la
+          esencia más auténtica de tus invitados en blanco y negro atemporal, las imprimimos al
+          instante y las convertimos en una pieza de colección firmada a mano.
+        </p>
+      </div>
+
+      <!-- Retrato impreso con firma. Reemplaza el SVG por tu foto real (img con filter:grayscale(1)). -->
+      <div class="print-stack" id="prints" role="img" aria-label="Retrato en blanco y negro impreso y firmado a mano">
+        <div class="print print--back"></div>
+        <div class="print print--mid"></div>
+        <div class="print print--front">
+          <img
+            src={imagenRetrato.src}
+            alt=""
+            class="print__photo"
+            loading="lazy"
+            decoding="async"
+            aria-hidden="true"
+          />
+          <div class="sign" id="sign">Con cariño, Sofía</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-[clamp(48px,7vw,88px)] grid grid-cols-1 gap-6 md:grid-cols-3">
+      <article
+        class="flex flex-col gap-(--card-gap) rounded-[28px] border border-white/15 bg-[linear-gradient(160deg,rgba(255,255,255,0.12),rgba(255,255,255,0.07))] px-7 pt-8 pb-[34px] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_48px_-24px_rgba(0,0,0,0.6)] transition-[translate,border-color] duration-300 ease-out will-change-[translate] hover:-translate-y-1 hover:border-white/30"
+      >
+        <div class="grid h-12 w-12 place-items-center rounded-xl border border-white/15 bg-white/10" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-[1.5] stroke-[#f3f4f6] [stroke-linecap:round] [stroke-linejoin:round]">
+            <path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/>
+          </svg>
+        </div>
+        <h3 class="font-serif text-[1.45rem] font-normal leading-[1.2] text-white">Estudio móvil de alta gama</h3>
+        <p class="text-[.98rem] leading-[1.65] text-(--color-text-primary)">Instalamos iluminación profesional y dirección de cámara en cualquier locación, desde un jardín hasta un salón de gala, para lograr retratos dignos de portada de revista.</p>
+      </article>
+      <article
+        class="flex flex-col gap-(--card-gap) rounded-[28px] border border-white/15 bg-[linear-gradient(160deg,rgba(255,255,255,0.12),rgba(255,255,255,0.07))] px-7 pt-8 pb-[34px] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_48px_-24px_rgba(0,0,0,0.6)] transition-[translate,border-color] duration-300 ease-out will-change-[translate] hover:-translate-y-1 hover:border-white/30"
+      >
+        <div class="grid h-12 w-12 place-items-center rounded-xl border border-white/15 bg-white/10" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-[1.5] stroke-[#f3f4f6] [stroke-linecap:round] [stroke-linejoin:round]">
+            <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3 class="font-serif text-[1.45rem] font-normal leading-[1.2] text-white">La elegancia del blanco y negro</h3>
+        <p class="text-[.98rem] leading-[1.65] text-(--color-text-primary)">Sin distracciones de color ni filtros pasajeros. Fotografías nítidas, emotivas y cargadas de carácter que lucirán impecables hoy y dentro de cincuenta años.</p>
+      </article>
+      <article
+        class="flex flex-col gap-(--card-gap) rounded-[28px] border border-white/15 bg-[linear-gradient(160deg,rgba(255,255,255,0.12),rgba(255,255,255,0.07))] px-7 pt-8 pb-[34px] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_48px_-24px_rgba(0,0,0,0.6)] transition-[translate,border-color] duration-300 ease-out will-change-[translate] hover:-translate-y-1 hover:border-white/30"
+      >
+        <div class="grid h-12 w-12 place-items-center rounded-xl border border-white/15 bg-white/10" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-[1.5] stroke-[#f3f4f6] [stroke-linecap:round] [stroke-linejoin:round]">
+            <path d="M4 20h16"/><path d="M5 16c3-1 4-9 7-9 2 0 0 7 2 7 1.5 0 2.5-3 5-3"/>
+          </svg>
+        </div>
+        <h3 class="font-serif text-[1.45rem] font-normal leading-[1.2] text-white">Impresión al instante y firma en vivo</h3>
+        <p class="text-[.98rem] leading-[1.65] text-(--color-text-primary)">Entregamos la fotografía impresa en segundos para que tus invitados plasmen su firma o dedicatoria sobre ella. Un libro de firmas moderno que querrás enmarcar.</p>
+      </article>
+    </div>
+
+    <div class="bwm__cta">
+      <a
+        class="btn"
+        href={ctaHref}
+        data-modal-open="modal-contacto-hero"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Cotizar Black &amp; White Moments para mi evento</a>
+      <p class="bwm__micro">Instalación incluida · Entrega inmediata durante el evento</p>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+/* ===== Tokens — alineados al estilo global de la web =====
+   (los colores y familias salen de las variables de Layout.astro;
+   serif de los headings del sitio, Segoe UI para cuerpo y
+   Brush Script MT para la firma, como en About.astro) */
+.bwm{
+  --glass:rgba(255,255,255,.07);
+  --glass-strong:rgba(255,255,255,.12);
+  --line:rgba(255,255,255,.16);
+  --ink:#ffffff;                                    /* headings, como text-white en las demás secciones */
+  --bone:var(--color-brand-secundary,#f3f4f6);      /* papel del retrato y botón */
+  --silver:var(--color-text-primary,#c3c7ca);       /* texto secundario */
+  --ash:var(--color-brand,#73777b);                 /* micro-copy */
+  /* Espaciado interno de las cards (icono → título → texto).
+     Ajusta este valor para cambiar TODO el espaciado de las cards a la vez. */
+  --card-gap:24px;
+  --display:ui-serif,Georgia,Cambria,"Times New Roman",serif;
+  --body:"Segoe UI",system-ui,-apple-system,sans-serif;
+  --script:"Brush Script MT","Snell Roundhand",cursive;
+}
+.bwm *{box-sizing:border-box;margin:0}
+
+/* ===== Sección ===== */
+.bwm{
+  position:relative;overflow:hidden;isolation:isolate;
+  background:var(--color-bg,#0d0f13);color:var(--silver);font-family:var(--body);
+  padding:clamp(96px,14vw,180px) clamp(20px,5vw,64px);
+}
+/* Luces de fondo: dan material al blur de las cards */
+.bwm::before,.bwm::after{
+  content:"";position:absolute;z-index:-1;border-radius:50%;pointer-events:none;
+}
+.bwm::before{width:46vw;height:46vw;min-width:320px;min-height:320px;left:-12vw;top:-10vw;
+  background:radial-gradient(circle,rgba(255,255,255,.26),transparent 68%);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 45%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 45%)}
+.bwm::after{width:40vw;height:40vw;min-width:300px;min-height:300px;right:-8vw;bottom:-12vw;
+  background:radial-gradient(circle,rgba(196,198,203,.22),transparent 68%);
+  -webkit-mask-image:linear-gradient(270deg,transparent 0%,#000 45%);
+  mask-image:linear-gradient(270deg,transparent 0%,#000 45%)}
+.bwm__grain{
+  position:absolute;inset:0;z-index:-1;opacity:.12;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 82%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 82%,transparent 100%);
+}
+.bwm__wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2}
+
+/* ===== Fundido con el fondo del body ===== */
+.bwm__fade{
+  position:absolute;left:0;right:0;height:clamp(140px,20vw,240px);
+  z-index:1;pointer-events:none;
+}
+.bwm__fade--top{top:0;background:linear-gradient(180deg,var(--color-bg,#0d0f13) 0%,transparent 100%)}
+.bwm__fade--bottom{bottom:0;background:linear-gradient(0deg,var(--color-bg,#0d0f13) 0%,transparent 100%)}
+
+/* ===== Cabecera ===== */
+.bwm__top{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,6vw,80px);align-items:center}
+.bwm__eyebrow{font-size:.9rem;color:var(--silver);letter-spacing:.04em;margin-bottom:14px}
+.bwm h2{
+  font:400 clamp(2.5rem,5.5vw,4.25rem)/1.05 var(--display);letter-spacing:-.01em;max-width:16ch;
+  margin-bottom:28px;text-wrap:balance;color:var(--ink);
+}
+.bwm__lead{font-size:1.05rem;line-height:1.65;color:var(--silver);max-width:52ch}
+
+/* ===== Retrato impreso con firma (el elemento memorable) ===== */
+.bwm .print-stack{position:relative;aspect-ratio:4/5;max-width:380px;width:100%;justify-self:center;cursor:pointer}
+.bwm .print{
+  position:absolute;inset:0;background:var(--bone);padding:5% 5% 15%;border-radius:3px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.7);transition:transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.bwm .print--back{transform:rotate(-7deg) translate(-6%,2%);opacity:.5;filter:grayscale(1) brightness(.8)}
+.bwm .print--mid{transform:rotate(5deg) translate(5%,-1%);opacity:.8}
+.bwm .print--front{transform:rotate(-1.5deg)}
+.bwm .print-stack:hover .print--back{transform:rotate(-10deg) translate(-12%,3%)}
+.bwm .print-stack:hover .print--mid{transform:rotate(8deg) translate(11%,-2%)}
+.bwm .print-stack:hover .print--front{transform:rotate(0deg) translateY(-2%)}
+/* Foto real del retrato: desaturada con CSS para el look B&N */
+.bwm .print__photo{
+  width:100%;height:100%;display:block;object-fit:cover;object-position:center top;
+  filter:grayscale(1) contrast(1.08);
+}
+.bwm .sign{
+  position:absolute;left:0;right:0;bottom:4.5%;
+  font:400 clamp(1.1rem,2.2vw,1.5rem)/1 var(--script);color:#1b1c1f;white-space:nowrap;
+  clip-path:inset(0 100% 0 0);transform:rotate(-4deg);text-align:center;
+}
+.bwm .sign.is-writing{animation:bwm-write 2.2s cubic-bezier(.5,0,.3,1) forwards}
+@keyframes bwm-write{to{clip-path:inset(0 0 0 0)}}
+
+/* ===== CTA ===== */
+.bwm__cta{margin-top:clamp(56px,8vw,96px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.bwm .btn{
+  display:inline-block;text-decoration:none;font:600 1rem/1 var(--body);color:var(--color-text-black,#0d0f13);
+  background:var(--bone);padding:20px 34px;border-radius:999px;
+  box-shadow:0 0 0 6px rgba(255,255,255,.08);transition:transform .25s,box-shadow .25s;
+}
+.bwm .btn:hover{transform:translateY(-2px);box-shadow:0 0 0 10px rgba(255,255,255,.1)}
+.bwm__micro{font-size:.88rem;color:var(--ash)}
+
+.bwm :focus-visible{outline:2px solid var(--bone);outline-offset:3px}
+
+/* ===== Responsive ===== */
+@media (max-width:900px){
+  .bwm__top{grid-template-columns:1fr}
+  .bwm__top > div:first-child,.bwm article{text-align:center}
+  .bwm h2,.bwm__lead{margin-left:auto;margin-right:auto}
+  .bwm article{align-items:center}
+  .bwm .print-stack{max-width:300px;order:-1;margin-bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bwm *{transition:none!important}
+  .bwm .sign{clip-path:none;animation:none!important}
+}
+</style>
+
+<script>
+  // La lógica se acota a la instancia de la sección para no depender de IDs globales
+  // ni colisionar con otras secciones del sitio.
+  // Los textos y tarjetas ahora son estáticos en el markup (mejor SEO, sin FOUC
+  // ni artefactos de repintado por innerHTML + backdrop-filter): el script
+  // solo anima la firma del retrato.
+  document.querySelectorAll<HTMLElement>(".bwm").forEach((root) => {
+    const sign = root.querySelector<HTMLElement>(".sign");
+    const prints = root.querySelector<HTMLElement>(".print-stack");
+    if (!sign || !prints) return;
+
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function writeSignature() {
+      if (reduce) return;
+      sign!.classList.remove("is-writing");
+      void sign!.offsetWidth; // reinicia la animación
+      sign!.classList.add("is-writing");
+    }
+
+    prints.addEventListener("click", writeSignature);
+
+    // La firma se escribe una vez, cuando la sección entra en pantalla
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          writeSignature();
+          io.disconnect();
+        }
+      },
+      { threshold: .4 }
+    );
+    io.observe(prints);
+  });
+</script>

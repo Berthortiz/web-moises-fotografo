@@ -1,0 +1,79 @@
+---
+/**
+ * Envoltorio con borde animado de tonos plata que rota alrededor del
+ * contenido del slot. El interior es transparente de verdad: se ve el
+ * fondo del hero (video / imágenes) a través del centro.
+ *
+ * Técnica: conic-gradient + @property --angle + máscara de anillo
+ * (mask-composite: exclude). No necesita tapa ::after ni z-index -1/-2.
+ */
+interface Props {
+    class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["rainbow-border", className]}>
+    <slot />
+</div>
+
+<style>
+    /* Registra la variable como ángulo animable (navegadores modernos).
+       Sin soporte, el borde queda como degradado estático. */
+    @property --angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+    }
+
+    .rainbow-border {
+        position: relative;
+        display: inline-flex;
+        max-width: 100%;
+        border-radius: 40px;
+        /* grosor del borde animado */
+        padding: 2px;
+    }
+
+    .rainbow-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        /* destello de brillo: casi todo transparente, con un arco de luz
+           plata que gira y se desvanece (efecto "shine") */
+        background: conic-gradient(
+            from var(--angle),
+            transparent 0deg 300deg,
+            rgba(66, 68, 69, 0.18) 318deg,
+            rgba(217, 221, 224, 0.45) 332deg,
+            #ffffff 342deg,
+            transparent 356deg 360deg
+        );
+        /* máscara de anillo: solo visible el área de padding (el borde) */
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: rainbow-border-rotate 4s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes rainbow-border-rotate {
+        to {
+            --angle: 1turn;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rainbow-border::before {
+            animation: none;
+        }
+    }
+</style>

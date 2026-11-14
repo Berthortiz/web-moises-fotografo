@@ -17,28 +17,28 @@ const links = [
     <div
         class="relative flex justify-between px-6 lg:px-(--padding-all-web) md:w-full items-center"
     >
-        <div>
+        <div class="md:flex md:gap-16">
             <a href="/" class="font-bold">
                 <img class="w-18 rounded-2xl" src={logo} alt="logo" />
             </a>
-        </div>
 
-        <nav
-            class="hidden md:flex gap-6 items-center text-blue-50"
-            role="navigation"
-            aria-label="Principal"
-        >
-            {
-                links.map((link) => (
-                    <a
-                        class="text-[1.1em] hover:text-white transition-colors"
-                        href={link.href}
-                    >
-                        {link.label}
-                    </a>
-                ))
-            }
-        </nav>
+            <nav
+                class="hidden md:flex gap-10 items-center text-blue-50"
+                role="navigation"
+                aria-label="Principal"
+            >
+                {
+                    links.map((link) => (
+                        <a
+                            class="text-[1.1em] hover:text-white transition-colors"
+                            href={link.href}
+                        >
+                            {link.label}
+                        </a>
+                    ))
+                }
+            </nav>
+        </div>
 
         <div class="hidden md:flex">
             <ButtonShine

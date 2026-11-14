@@ -1,0 +1,89 @@
+---
+
+interface Props {
+    variant?: "fixed" | "scoped";
+}
+
+const { variant = "fixed" } = Astro.props;
+---
+<div class:list={["atmosphere", variant]} aria-hidden="true">
+	<div class="atmo-orb atmo-orb-blue"></div>
+	<div class="atmo-orb atmo-orb-cyan"></div>
+	<div class="atmo-orb atmo-orb-deep"></div>
+	<div class="atmo-noise"></div>
+</div>
+
+<style>
+	/* ── Atmósfera de marca ────────────────────────────────────────────── */
+	.atmosphere {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		overflow: clip;
+		pointer-events: none;
+	}
+
+	/* Modo scoped: se clava a la sección contenedora en vez del viewport */
+	.atmosphere.scoped {
+		position: absolute;
+		z-index: 0;
+	}
+
+	.atmo-orb {
+		position: absolute;
+		border-radius: 9999px;
+		transform: translate3d(0, 0, 0); /* capa GPU estable */
+	}
+
+	.atmo-orb-blue {
+		background: radial-gradient(
+			circle at center,
+			color-mix(in srgb, var(--color-brand, #008cff) 16%, transparent) 0%,
+			color-mix(in srgb, var(--color-brand, #008cff) 6%, transparent) 42%,
+			transparent 72%
+		);
+		width: clamp(30rem, 80vw, 58rem);
+		aspect-ratio: 1;
+		top: -12rem;
+		left: -14rem;
+		filter: blur(110px);
+	}
+
+	.atmo-orb-cyan {
+		background: radial-gradient(
+			circle at center,
+			color-mix(in srgb, var(--color-brand-two, #03cff3) 13%, transparent) 0%,
+			color-mix(in srgb, var(--color-brand-two, #03cff3) 5%, transparent) 42%,
+			transparent 72%
+		);
+		width: clamp(20rem, 55vw, 38rem);
+		aspect-ratio: 1;
+		top: 40%;
+		right: -12rem;
+		filter: blur(90px);
+	}
+
+	.atmo-orb-deep {
+		background: radial-gradient(
+			circle at center,
+			color-mix(in srgb, var(--color-brand, #008cff) 12%, transparent) 0%,
+			color-mix(in srgb, var(--color-brand, #008cff) 4%, transparent) 44%,
+			transparent 73%
+		);
+		width: clamp(24rem, 70vw, 48rem);
+		aspect-ratio: 1;
+		bottom: -16rem;
+		left: 30%;
+		filter: blur(120px);
+	}
+
+	/* Grano de ruido sobre el gradiente: elimina el banding de los degradados
+	   en casi-negro y unifica la paleta (textura SVG feTurbulence en tile). */
+	.atmo-noise {
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-size: 160px 160px;
+		opacity: 0.035;
+	}
+</style>

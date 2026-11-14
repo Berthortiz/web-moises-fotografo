@@ -69,7 +69,16 @@ const items = slides?.length ? slides : defaultSlides;
         overflow: hidden;
     }
 
-   
+    @media (max-width: 768px) {
+        .fade-slider {
+            width: 100%;
+        }
+
+        .fade-slider .swiper-slide img {
+            object-position: center top;
+        }
+    }
+
     .fade-slider .swiper-slide {
         filter: blur(14px);
         transition-property: opacity, filter;

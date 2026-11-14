@@ -1,0 +1,333 @@
+---
+import { Icon } from "astro-icon/components";
+import ButtonShine from "./ButtonShine.astro";
+
+interface BotonModalContacto {
+    href: string;
+    text: string;
+    /** Nombre del icono (astro-icon, de src/icons). Opcional. */
+    icon?: string;
+    /** Tamaño del icono en px (default: 19). */
+    iconSize?: number;
+}
+
+interface Props {
+    /** id único del modal. Los botones que lo abren usan `data-modal-open="{id}"`. */
+    id: string;
+    /** URL del video que se reproduce al abrir el modal. Puede ser un mp4
+     *  directo o un link de YouTube (watch, youtu.be, shorts, embed). */
+    videoSrc: string;
+    /** Imagen de portada del video. */
+    poster?: string;
+    /** Botones de contacto con link, mostrados debajo del video. */
+    buttons?: BotonModalContacto[];
+    /** Duración (ms) de las animaciones de entrada/salida (default: 300). */
+    transicionMs?: number;
+}
+
+const { id, videoSrc, poster, buttons = [], transicionMs = 300 } = Astro.props;
+
+/**
+ * Si el video es de YouTube (watch, youtu.be, shorts o embed) devuelve la URL
+ * de embed lista para el iframe; si no, devuelve null.
+ */
+function youtubeEmbedUrl(url: string): string | null {
+    const m = url.match(
+        /(?:youtube\.com\/(?:watch\?.*v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/,
+    );
+    if (!m) return null;
+    return `https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+}
+
+const esYoutube = youtubeEmbedUrl(videoSrc) !== null;
+// La URL que carga el cliente: embed de YouTube (si aplica) o el mp4 directo.
+const urlReproduccion = esYoutube ? youtubeEmbedUrl(videoSrc)! : videoSrc;
+---
+
+<div
+    id={id}
+    data-modal-contacto
+    data-video-src={urlReproduccion}
+    data-es-youtube={esYoutube}
+    data-transicion-ms={transicionMs}
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    class="fixed inset-0 z-[100] hidden items-center justify-center"
+>
+    <!-- Fondo a pantalla completa con blur -->
+    <div
+        data-modal-fondo
+        class=" absolute inset-0 z-0 bg-black/80 opacity-0 backdrop-blur-lg transition-opacity"
+        style={`transition-duration:${transicionMs}ms`}
+        aria-hidden="true"
+    >
+    </div>
+
+    <!-- Contenido centrado: video (9/16 o 16/9) + botones de contacto -->
+    <div
+        data-modal-contenido
+        class={`relative z-10 my-auto flex flex-col items-center gap-4 px-6 py-6 opacity-0 scale-90 transition-all ${
+            // En YouTube el video es 16/9 y ocupa casi toda la pantalla;
+            // en mp4 se mantiene el modal angosto con el video vertical.
+            esYoutube ? "w-[min(94vw,150svh)]" : "w-full max-w-md"
+        }`}
+        style={`transition-duration:${transicionMs}ms`}
+    >
+        <!-- Video en formato vertical 9/16 (mp4 directo) o horizontal 16/9 (YouTube) -->
+        <div
+            class={`relative overflow-hidden rounded-2xl border border-white/20 bg-black shadow-2xl ${
+                esYoutube
+                    ? "aspect-video w-full"
+                    : "aspect-[9/16] h-[min(60svh,150vw)] w-auto"
+            }`}
+        >
+            <!-- X superpuesta sobre el video para no quitarle alto a la pantalla -->
+            <button
+                data-modal-cerrar
+                type="button"
+                aria-label="Cerrar modal de contacto"
+                class="absolute top-3 right-3 z-10 rounded-full border border-[#d9dde0]/40 bg-black/60 p-2 text-[#e3e6e8] transition-colors hover:bg-[#d9dde0]/20"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                >
+                    <path d="M18 6 6 18M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            {
+                esYoutube ? (
+                    <iframe
+                        class="h-full w-full"
+                        title="Video de presentación"
+                        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                        allowfullscreen
+                        frameborder="0"
+                    />
+                ) : (
+                    <video
+                        class="h-full w-full object-cover"
+                        poster={poster}
+                        controls
+                        playsinline
+                        preload="none"
+                    />
+                )
+            }
+        </div>
+
+        <!-- Botones de contacto (cada uno con su link) -->
+        {
+            buttons.length > 0 && (
+                <div
+                    data-modal-botones
+                    class={`mx-auto grid grid-cols-1 gap-3 ${
+                        esYoutube ? "w-full max-w-md" : "w-full"
+                    }`}
+                >
+                    {buttons.map((boton) => (
+                        <ButtonShine
+                            href={boton.href}
+                            class="w-full items-center justify-center border border-[#d9dde0]/70 px-5 py-3 text-sm font-medium text-[#e3e6e8]"
+                            text={boton.text}
+                        >
+                            {boton.icon && (
+                                <Icon
+                                    name={boton.icon}
+                                    size={boton.iconSize ?? 19}
+                                />
+                            )}
+                        </ButtonShine>
+                    ))}
+                </div>
+            )
+        }
+    </div>
+</div>
+
+<script>
+    /* ========= Modal de contacto (componente reutilizable) =========
+     * - Cada instancia <ModalContacto> se autodescubre por [data-modal-contacto].
+     * - Se abre desde cualquier elemento con `data-modal-open="{id}"`.
+     * - Cierra con el botón X, click en el fondo borroso o tecla Escape.
+     * - El video (data-video-src) se carga al abrir: si es de YouTube se
+     *   pone el src del iframe (embed con autoplay), si es mp4 se reproduce
+     *   con sonido; si el navegador bloquea el autoplay con audio, en silencio.
+     */
+    document
+        .querySelectorAll<HTMLElement>("[data-modal-contacto]")
+        .forEach((modal) => {
+            const videoSrc = modal.dataset.videoSrc;
+            const esYoutube = modal.dataset.esYoutube === "true";
+            const duracion = Number(modal.dataset.transicionMs) || 300;
+
+            if (!videoSrc) return;
+
+            const fondo =
+                modal.querySelector<HTMLElement>("[data-modal-fondo]");
+            const contenido = modal.querySelector<HTMLElement>(
+                "[data-modal-contenido]",
+            );
+            const btnCerrar = modal.querySelector<HTMLButtonElement>(
+                "[data-modal-cerrar]",
+            );
+            const botones = modal.querySelector<HTMLElement>(
+                "[data-modal-botones]",
+            );
+            const iframe = modal.querySelector<HTMLIFrameElement>("iframe");
+            const video = modal.querySelector<HTMLVideoElement>("video");
+            const triggers = document.querySelectorAll<HTMLElement>(
+                `[data-modal-open="${modal.id}"]`,
+            );
+
+            let abierto = false;
+            let disparador: HTMLElement | null = null;
+            let temporizador: number | undefined;
+
+            /* ========= Bloqueo de scroll sin tocar la barra =========
+             * No usamos overflow:hidden en body porque haría desaparecer la
+             * barra de scroll y el layout saltaría. En su lugar congelamos
+             * el scroll cancelando los eventos que lo disparan; la barra
+             * sigue visible (el modal llega hasta ella) y no hay salto.
+             * Solo se bloquea el scroll FUERA del contenido del modal, para
+             * que si el modal necesita scroll interno en pantallas chicas
+             * siga funcionando.
+             */
+            const teclasScroll = [
+                "ArrowUp",
+                "ArrowDown",
+                "PageUp",
+                "PageDown",
+                "Home",
+                "End",
+                " ",
+            ];
+
+            function bloquearScroll(event: Event) {
+                const destino = event.target as Node | null;
+                if (contenido?.contains(destino)) return;
+                event.preventDefault();
+            }
+
+            function bloquearTeclaScroll(event: KeyboardEvent) {
+                if (!teclasScroll.includes(event.key)) return;
+                bloquearScroll(event);
+            }
+
+            function congelarScroll() {
+                document.addEventListener("wheel", bloquearScroll, {
+                    passive: false,
+                });
+                document.addEventListener("touchmove", bloquearScroll, {
+                    passive: false,
+                });
+                document.addEventListener("keydown", bloquearTeclaScroll);
+            }
+
+            function liberarScroll() {
+                document.removeEventListener("wheel", bloquearScroll);
+                document.removeEventListener("touchmove", bloquearScroll);
+                document.removeEventListener("keydown", bloquearTeclaScroll);
+            }
+
+            function abrirModal() {
+                if (abierto || !modal) return;
+                abierto = true;
+                window.clearTimeout(temporizador);
+
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+                modal.setAttribute("aria-hidden", "false");
+                congelarScroll();
+
+                // doble rAF para que la transición de entrada realmente anime
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        fondo?.classList.remove("opacity-0");
+                        contenido?.classList.remove("opacity-0", "scale-90");
+                    });
+                });
+
+                btnCerrar?.focus();
+
+                if (esYoutube && iframe) {
+                    // el src con autoplay=1 ya está en data-video-src
+                    iframe.src = videoSrc ?? "";
+                } else if (video) {
+                    video.src = videoSrc ?? "";
+                    video.load();
+                    // hubo click del usuario → autoplay con sonido permitido
+                    video.play().catch(() => {
+                        // si el navegador bloquea el autoplay con audio: silenciar
+                        video.muted = true;
+                        video.play().catch(() => {});
+                    });
+                }
+            }
+
+            function cerrarModal() {
+                if (!abierto) return;
+                abierto = false;
+                modal.setAttribute("aria-hidden", "true");
+
+                fondo?.classList.add("opacity-0");
+                contenido?.classList.add("opacity-0", "scale-90");
+
+                temporizador = window.setTimeout(() => {
+                    if (abierto) return;
+                    modal.classList.add("hidden");
+                    modal.classList.remove("flex");
+                    liberarScroll();
+
+                    if (esYoutube && iframe) {
+                        // vaciar el src detiene la reproducción del video de YouTube
+                        iframe.removeAttribute("src");
+                    } else if (video) {
+                        video.pause();
+                        video.removeAttribute("src");
+                        video.load();
+                    }
+                }, duracion);
+
+                disparador?.focus();
+            }
+
+            triggers.forEach((trigger) => {
+                trigger.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    disparador = trigger;
+                    abrirModal();
+                });
+            });
+
+            btnCerrar?.addEventListener("click", cerrarModal);
+            fondo?.addEventListener("click", cerrarModal);
+
+            // al elegir una opción de contacto, cerramos el modal
+            botones?.addEventListener("click", () => cerrarModal());
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape" && abierto) {
+                    cerrarModal();
+                }
+            });
+        });
+</script>
+
+<style>
+    @media (prefers-reduced-motion: reduce) {
+        [data-modal-fondo],
+        [data-modal-contenido] {
+            transition: none;
+        }
+    }
+</style>
