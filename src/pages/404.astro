@@ -1,0 +1,136 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+    title="Página no encontrada | Moisés Magariño"
+    description="Esta página no está disponible. Vuelve al portafolio de Moisés Magariño."
+    robots="noindex, follow"
+>
+    <section class="not-found">
+        <div class="not-found-mark" aria-hidden="true">404</div>
+        <p class="not-found-eyebrow">Fuera de encuadre</p>
+        <h1>Esta página no aparece en la toma.</h1>
+        <p class="not-found-copy">
+            Puede que el enlace haya cambiado o que el momento ya haya pasado.
+            Volvamos a encontrar el camino.
+        </p>
+        <div class="not-found-actions">
+            <a class="not-found-primary" href="/">Volver al inicio</a>
+            <a class="not-found-secondary" href="/#galeria">Explorar la galería</a>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    .not-found {
+        position: relative;
+        display: flex;
+        min-height: min(75svh, 52rem);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 5rem 1.5rem;
+        text-align: center;
+        isolation: isolate;
+    }
+
+    .not-found::before,
+    .not-found::after {
+        position: absolute;
+        z-index: -1;
+        content: "";
+        pointer-events: none;
+    }
+
+    .not-found::before {
+        inset: 12% 15%;
+        background: radial-gradient(ellipse, rgb(167 173 180 / 12%), transparent 68%);
+    }
+
+    .not-found::after {
+        width: min(66vw, 38rem);
+        height: min(66vw, 38rem);
+        border: 1px solid rgb(217 220 223 / 9%);
+        border-radius: 50%;
+        box-shadow:
+            0 0 0 4rem rgb(217 220 223 / 2%),
+            0 0 0 8rem rgb(217 220 223 / 1%);
+    }
+
+    .not-found-mark {
+        color: rgb(217 220 223 / 9%);
+        font-size: clamp(8rem, 29vw, 23rem);
+        font-weight: 700;
+        letter-spacing: -0.12em;
+        line-height: 0.8;
+        user-select: none;
+    }
+
+    .not-found-eyebrow {
+        margin: -0.2em 0 1rem;
+        color: #a7adb4;
+        font-size: 0.75rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+    }
+
+    .not-found h1 {
+        max-width: 13ch;
+        margin: 0;
+        color: #f3f4f6;
+        font-size: clamp(2.25rem, 6vw, 4.5rem);
+        font-weight: 500;
+        letter-spacing: -0.06em;
+        line-height: 1.05;
+    }
+
+    .not-found-copy {
+        max-width: 35rem;
+        margin: 1.25rem 0 0;
+        color: #bfc3c7;
+        font-size: clamp(1rem, 2vw, 1.125rem);
+        line-height: 1.7;
+    }
+
+    .not-found-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 2rem;
+    }
+
+    .not-found-actions a {
+        display: inline-flex;
+        min-height: 3rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.25rem;
+        color: #e3e6e8;
+        border: 1px solid rgb(217 220 223 / 55%);
+        text-decoration: none;
+        transition: color 160ms ease, background 160ms ease;
+    }
+
+    .not-found-actions a:hover {
+        color: #0d0f13;
+        background: #e3e6e8;
+    }
+
+    .not-found-primary {
+        color: #0d0f13 !important;
+        background: #d9dcdf;
+    }
+
+    .not-found-primary:hover {
+        background: #fff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .not-found-actions a {
+            transition: none;
+        }
+    }
+</style>

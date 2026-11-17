@@ -1,0 +1,115 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LegalPage from "../components/LegalPage.astro";
+
+const updated = new Date().toLocaleDateString("es-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
+---
+
+<Layout
+    title="Política de privacidad | Moisés Magariño"
+    description="Conoce cómo Moisés Magariño trata la información personal al visitar moisesmagarino.com o contactar sus servicios."
+    canonical="/privacidad/"
+>
+    <LegalPage
+        title="Política de privacidad"
+        eyebrow="Información y transparencia"
+        description="Esta política explica qué información puede tratarse cuando visitas este sitio o contactas a Moisés Magariño."
+        updated={updated}
+    >
+        <section>
+            <h2>Responsable y alcance</h2>
+            <p>
+                El responsable de este sitio es Moisés Magariño, fotógrafo y filmmaker
+                con base en Florida, Estados Unidos. Esta política se aplica a
+                moisesmagarino.com y a las comunicaciones que inicies mediante los
+                canales publicados aquí. No sustituye los avisos de privacidad de
+                servicios externos que decidas utilizar. Para consultas de privacidad,
+                escribe a
+                <a href="mailto:info@moisesmagarino.com">info@moisesmagarino.com</a>.
+            </p>
+        </section>
+        <section>
+            <h2>Información que podemos recibir</h2>
+            <ul>
+                <li>
+                    Los datos que nos envías voluntariamente al solicitar información
+                    o una cotización, como nombre, correo electrónico, teléfono,
+                    detalles del servicio y el contenido de tu mensaje.
+                </li>
+                <li>
+                    La información incluida en mensajes que nos envíes por WhatsApp,
+                    teléfono o redes sociales.
+                </li>
+                <li>
+                    Datos técnicos básicos que tu navegador y los proveedores de
+                    alojamiento o seguridad puedan procesar para entregar y proteger
+                    el sitio.
+                </li>
+            </ul>
+            <p>
+                No solicitamos deliberadamente datos sensibles. Evita incluirlos en
+                mensajes o formularios.
+            </p>
+        </section>
+        <section>
+            <h2>Para qué usamos la información</h2>
+            <p>
+                Usamos la información para responder consultas, preparar propuestas,
+                coordinar servicios fotográficos o audiovisuales, mantener la
+                seguridad del sitio y cumplir obligaciones legales aplicables. No
+                vendemos datos personales ni los usamos para enviarte promociones no
+                solicitadas.
+            </p>
+        </section>
+        <section>
+            <h2>Proveedores y divulgación</h2>
+            <p>
+                Para operar el sitio y responder solicitudes pueden intervenir
+                proveedores técnicos, de alojamiento, correo o gestión de formularios.
+                Si envías un formulario, el proveedor que lo procese —actualmente
+                Formspree en el formulario configurado para este sitio— recibirá los
+                datos necesarios para entregarlo. WhatsApp, Instagram, YouTube y otros
+                servicios externos aplican sus propias políticas cuando los visitas o
+                los contactas. No compartimos datos salvo para prestar el servicio,
+                atender una obligación legal o proteger derechos y seguridad.
+            </p>
+        </section>
+        <section>
+            <h2>Conservación y seguridad</h2>
+            <p>
+                Conservamos los mensajes durante el tiempo necesario para responder,
+                gestionar una relación profesional y atender obligaciones legales.
+                Aplicamos medidas razonables para proteger la información, aunque
+                ningún sistema de transmisión o almacenamiento puede garantizar
+                seguridad absoluta.
+            </p>
+        </section>
+        <section>
+            <h2>Tus opciones y derechos</h2>
+            <p>
+                Puedes solicitar acceso, corrección o eliminación de la información
+                que nos hayas enviado, sujeto a las obligaciones legales aplicables.
+                Escríbenos a
+                <a href="mailto:info@moisesmagarino.com">info@moisesmagarino.com</a>,
+                por
+                <a href="https://wa.link/c24rca">WhatsApp</a>
+                o llama al <a href="tel:+14075906377">+1 (407) 590-6377</a>. También
+                puedes limitar cookies opcionales desde las preferencias del sitio o
+                la configuración de tu navegador.
+            </p>
+        </section>
+        <section>
+            <h2>Menores y cambios</h2>
+            <p>
+                Este sitio no está dirigido a menores de 13 años y no recopilamos
+                conscientemente su información personal. Podemos actualizar esta
+                política para reflejar cambios en el sitio o en las obligaciones
+                aplicables; la fecha indicada arriba señala la revisión más reciente.
+            </p>
+        </section>
+    </LegalPage>
+</Layout>

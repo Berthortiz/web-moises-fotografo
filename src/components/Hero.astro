@@ -9,10 +9,43 @@ import videoPoster from "../assets/img/moises-poster.jpg";
 import moisesHero1 from "../assets/moi-heroa/moises-b-and-.jpg";
 import moisesHero2 from "../assets/moi-heroa/moi-2 (1).jpg";
 import moisesHero3 from "../assets/moi-heroa/moi-3.jpg";
+import moisesBw1 from "../assets/moises-b-w/moises-bw-1.jpg";
+import moisesBw2 from "../assets/moises-b-w/moises-bw-2.jpg";
+import moisesBw3 from "../assets/moises-b-w/moises-bw-3.jpg";
+import moisesBw4 from "../assets/moises-b-w/moises-bw-4.jpg";
 
 // URL del video que reproduce el modal al abrirse.
 // Si es un link de YouTube, el modal lo muestra como embed en 16/9 con autoplay.
 const VIDEO_MODAL_URL = "https://youtu.be/oyvbRlG-P0w";
+
+const heroImages = [
+    {
+        image: moisesHero1,
+        alt: "Moisés Magariño",
+        className: "h-full w-full object-cover",
+    },
+
+    {
+        image: moisesBw1,
+        alt: "Moisés Magariño en blanco y negro",
+        className: "h-full w-full object-cover",
+    },
+    {
+        image: moisesBw2,
+        alt: "Moisés Magariño en blanco y negro",
+        className: "h-full w-full object-cover",
+    },
+    {
+        image: moisesBw3,
+        alt: "Moisés Magariño en blanco y negro",
+        className: "h-full w-full object-cover",
+    },
+    {
+        image: moisesBw4,
+        alt: "Moisés Magariño en blanco y negro",
+        className: "h-full w-full object-cover",
+    },
+];
 
 // Botón de contacto que muestra el modal debajo del video
 const botonesModalContacto = [
@@ -44,36 +77,20 @@ const botonesModalContacto = [
                 aria-label="Galería automática de fotos"
             >
                 <div class="swiper-wrapper h-full">
-                    <div class="swiper-slide fade-hero-slide">
-                        <img
-                            src={moisesHero1.src}
-                            class="hero-image--moises-1 h-full w-full object-cover"
-                            alt="Moisés Magariño"
-                            loading="eager"
-                            decoding="async"
-                            draggable="false"
-                        />
-                    </div>
-                    <div class="swiper-slide fade-hero-slide">
-                        <img
-                            src={moisesHero2.src}
-                            class="h-full w-full object-cover"
-                            alt="Moisés Magariño"
-                            loading="lazy"
-                            decoding="async"
-                            draggable="false"
-                        />
-                    </div>
-                    <div class="swiper-slide fade-hero-slide">
-                        <img
-                            src={moisesHero3.src}
-                            class="h-full w-full object-cover"
-                            alt="Moisés Magariño"
-                            loading="lazy"
-                            decoding="async"
-                            draggable="false"
-                        />
-                    </div>
+                    {
+                        heroImages.map((item, index) => (
+                            <div class="swiper-slide fade-hero-slide">
+                                <img
+                                    src={item.image.src}
+                                    class={item.className}
+                                    alt={item.alt}
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    decoding="async"
+                                    draggable="false"
+                                />
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </div>
@@ -278,6 +295,7 @@ const botonesModalContacto = [
             height: 100%;
             width: 100%;
             object-fit: cover;
+            object-position: center top;
             user-select: none;
         }
 
@@ -310,10 +328,6 @@ const botonesModalContacto = [
                     rgba(0, 0, 0, 0.45) 84%,
                     transparent 100%
                 );
-            }
-
-            .fade-hero-swiper .hero-image--moises-1 {
-                object-position: center top;
             }
         }
 

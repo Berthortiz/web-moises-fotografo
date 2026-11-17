@@ -17,6 +17,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Local privacy audit notes
+/skill-privacidad.md
+
 # macOS-specific files
 .DS_Store
 

@@ -1,0 +1,71 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LegalPage from "../components/LegalPage.astro";
+
+const updated = new Date().toLocaleDateString("es-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
+---
+
+<Layout
+    title="Política de cookies | Moisés Magariño"
+    description="Información sobre cookies y almacenamiento del navegador en moisesmagarino.com y cómo cambiar tus preferencias."
+    canonical="/politica-de-cookies/"
+>
+    <LegalPage
+        title="Política de cookies"
+        eyebrow="Controla tus preferencias"
+        description="Te explicamos qué almacenamiento usa este sitio, qué servicios externos pueden intervenir y cómo cambiar tus preferencias."
+        updated={updated}
+    >
+        <section>
+            <h2>Qué usamos actualmente</h2>
+            <p>
+                Este sitio no activa actualmente cookies de analítica ni publicidad.
+                Guarda en el almacenamiento local de tu navegador una preferencia
+                llamada <code>moises-cookie-consent-v1</code> para recordar si
+                aceptaste las categorías opcionales o elegiste solo las necesarias.
+                Este registro no es una cookie y no se utiliza para identificarte ni
+                para rastrear tu actividad en otros sitios.
+            </p>
+        </section>
+        <section>
+            <h2>Contenido y servicios de terceros</h2>
+            <p>
+                Algunas funciones pueden solicitar recursos a proveedores externos,
+                por ejemplo la galería, el formulario de contacto o contenido que
+                abres en plataformas como YouTube. Al utilizar esas funciones, dichos
+                proveedores pueden recibir datos técnicos como tu dirección IP y
+                aplicar sus propias tecnologías y políticas. Los enlaces a redes
+                sociales también te llevan a servicios ajenos a este sitio.
+            </p>
+            <p>
+                La opción de consentimiento de este sitio no activa actualmente
+                herramientas de seguimiento opcionales; las funciones solicitadas
+                expresamente por ti pueden comunicarse con el proveedor necesario
+                para mostrarlas.
+            </p>
+        </section>
+        <section>
+            <h2>Cómo cambiar tu elección</h2>
+            <p>
+                Usa el botón “Preferencias de cookies” al pie de cualquier página para
+                revisar o cambiar la opción guardada. También puedes borrar el
+                almacenamiento del sitio desde la configuración de tu navegador. Si
+                bloqueas el almacenamiento, el sitio no podrá recordar tu elección y
+                podría volver a mostrar el aviso.
+            </p>
+        </section>
+        <section>
+            <h2>Actualizaciones</h2>
+            <p>
+                Si incorporamos nuevas tecnologías de almacenamiento, actualizaremos
+                esta política y, cuando corresponda, solicitaremos tu consentimiento
+                antes de activarlas. La fecha indicada arriba señala la revisión más
+                reciente.
+            </p>
+        </section>
+    </LegalPage>
+</Layout>

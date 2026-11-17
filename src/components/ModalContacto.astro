@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import ButtonShine from "./ButtonShine.astro";
+import ModalPricing from "./ModalPricing.astro";
 
 interface BotonModalContacto {
     href: string;
@@ -21,11 +22,20 @@ interface Props {
     poster?: string;
     /** Botones de contacto con link, mostrados debajo del video. */
     buttons?: BotonModalContacto[];
+    /** Muestra la sección de precios y servicios debajo de los botones. */
+    showPricing?: boolean;
     /** Duración (ms) de las animaciones de entrada/salida (default: 300). */
     transicionMs?: number;
 }
 
-const { id, videoSrc, poster, buttons = [], transicionMs = 300 } = Astro.props;
+const {
+    id,
+    videoSrc,
+    poster,
+    buttons = [],
+    showPricing = true,
+    transicionMs = 300,
+} = Astro.props;
 
 /**
  * Si el video es de YouTube (watch, youtu.be, shorts o embed) devuelve la URL
@@ -53,24 +63,26 @@ const urlReproduccion = esYoutube ? youtubeEmbedUrl(videoSrc)! : videoSrc;
     role="dialog"
     aria-modal="true"
     aria-hidden="true"
-    class="fixed inset-0 z-[100] hidden items-center justify-center"
+    class="fixed inset-0 z-[100] hidden items-start justify-center overflow-y-auto overscroll-contain p-4 sm:p-6"
 >
     <!-- Fondo a pantalla completa con blur -->
     <div
         data-modal-fondo
-        class=" absolute inset-0 z-0 bg-black/80 opacity-0 backdrop-blur-lg transition-opacity"
+        class="fixed inset-0 z-0 bg-black/80 opacity-0 backdrop-blur-lg transition-opacity"
         style={`transition-duration:${transicionMs}ms`}
         aria-hidden="true"
     >
     </div>
 
-    <!-- Contenido centrado: video (9/16 o 16/9) + botones de contacto -->
+    <!-- Contenido: video (9/16 o 16/9) + botones de contacto + precios/servicios -->
     <div
         data-modal-contenido
-        class={`relative z-10 my-auto flex flex-col items-center gap-4 px-6 py-6 opacity-0 scale-90 transition-all ${
-            // En YouTube el video es 16/9 y ocupa casi toda la pantalla;
-            // en mp4 se mantiene el modal angosto con el video vertical.
-            esYoutube ? "w-[min(94vw,150svh)]" : "w-full max-w-md"
+        class={`relative z-10 my-6 flex flex-col items-center gap-4 px-4 py-4 opacity-0 scale-90 transition-all sm:my-10 sm:px-6 sm:py-6 ${
+            esYoutube
+                ? "w-[min(96vw,1100px)]"
+                : showPricing
+                  ? "w-full max-w-md sm:max-w-4xl"
+                  : "w-full max-w-md"
         }`}
         style={`transition-duration:${transicionMs}ms`}
     >
@@ -125,13 +137,13 @@ const urlReproduccion = esYoutube ? youtubeEmbedUrl(videoSrc)! : videoSrc;
             }
         </div>
 
-        <!-- Botones de contacto (cada uno con su link) -->
+        <!-- Botones de contacto (cada uno con su link)
         {
             buttons.length > 0 && (
                 <div
                     data-modal-botones
                     class={`mx-auto grid grid-cols-1 gap-3 ${
-                        esYoutube ? "w-full max-w-md" : "w-full"
+                        esYoutube || showPricing ? "w-full max-w-md" : "w-full"
                     }`}
                 >
                     {buttons.map((boton) => (
@@ -151,6 +163,9 @@ const urlReproduccion = esYoutube ? youtubeEmbedUrl(videoSrc)! : videoSrc;
                 </div>
             )
         }
+        -->
+
+        {showPricing && <ModalPricing class="w-full" />}
     </div>
 </div>
 

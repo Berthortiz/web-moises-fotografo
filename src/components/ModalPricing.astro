@@ -1,0 +1,365 @@
+---
+import { whatsappLink } from "../utils/whatsapp";
+
+/**
+ * Sección de precios y servicios pensada para mostrarse dentro del modal.
+ */
+interface PricingTier {
+  badge?: string;
+  name: string;
+  desc?: string;
+  price: string;
+  period?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  highlight?: boolean;
+  highlightLabel?: string;
+  features?: string[];
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  tiers?: PricingTier[];
+  note?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = "BLACK & WHITE MOMENTS",
+  title = "Exclusive Photography Experience",
+  subtitle =
+    "Transformamos tu evento en una experiencia fotográfica única, donde cada imagen en blanco y negro se convierte en un recuerdo inolvidable, acompañado de mensajes y dedicatorias de tus invitados.",
+  tiers = [
+    {
+      badge: "White Package",
+      name: "White Package",
+      desc: "Momentos únicos, recuerdos para siempre.",
+      price: "$995",
+      period: "",
+      ctaText: "Reservar",
+      ctaHref: whatsappLink("Black & White Moments - WHITE PACKAGE ($995)"),
+      features: [
+        "2 horas de experiencia fotográfica",
+        "Estudio fotográfico profesional instalado directamente en tu evento",
+        "Hasta 50 fotografías individuales impresas al instante en blanco y negro",
+        "Tus invitados podrán escribir mensajes y dedicatorias personalizados en las fotografías",
+        "Todas las fotografías firmadas serán entregadas al anfitrión en una elegante caja o sobre al finalizar el evento",
+        "Duración: 2 horas o hasta completar 50 fotografías, lo que ocurra primero",
+      ],
+    },
+    {
+      badge: "Black Package",
+      name: "Black Package",
+      desc: "Más momentos, más recuerdos para compartir.",
+      price: "$1,295",
+      period: "",
+      highlight: true,
+      highlightLabel: "Más popular",
+      ctaText: "Reservar",
+      ctaHref: whatsappLink("Black & White Moments - BLACK PACKAGE ($1,295)"),
+      features: [
+        "3 horas de experiencia fotográfica",
+        "Estudio fotográfico profesional instalado directamente en tu evento",
+        "Hasta 100 fotografías individuales impresas al instante en blanco y negro",
+        "Tus invitados podrán escribir mensajes y dedicatorias personalizados en las fotografías",
+        "Todas las fotografías firmadas serán entregadas al anfitrión en una elegante caja o sobre al finalizar el evento",
+        "Entrega digital de todas las fotografías realizadas",
+        "Envío de las fotografías digitales a una dirección de correo electrónico seleccionada por el cliente",
+        "Fotografías digitales ideales para compartir con amigos, familiares y en redes sociales",
+        "Duración: 3 horas o hasta completar 100 fotografías, lo que ocurra primero",
+      ],
+    },
+    {
+      badge: "Black & White Plus",
+      name: "Black & White Plus",
+      desc: "La experiencia más exclusiva para conservar tus mejores recuerdos.",
+      price: "$1,795",
+      period: "",
+      ctaText: "Reservar",
+      ctaHref: whatsappLink(
+        "Black & White Moments - BLACK & WHITE PLUS ($1,795)",
+      ),
+      features: [
+        "4 horas de experiencia fotográfica",
+        "Estudio fotográfico profesional instalado directamente en tu evento",
+        "Hasta 150 fotografías individuales impresas al instante en blanco y negro",
+        "Tus invitados podrán escribir mensajes y dedicatorias personalizados en las fotografías",
+        "Un elegante álbum de recuerdos para conservar las fotografías impresas y los mensajes de tus invitados",
+        "Entrega del álbum al anfitrión al finalizar el evento",
+        "Entrega digital de todas las fotografías realizadas",
+        "Envío de las fotografías digitales a una dirección de correo electrónico seleccionada por el cliente",
+        "Fotografías digitales ideales para compartir con amigos, familiares y en redes sociales",
+        "Duración: 4 horas o hasta completar 150 fotografías, lo que ocurra primero",
+      ],
+    },
+  ],
+  note = "Información importante: cada fotografía se imprime una sola vez. Los invitados podrán firmar y escribir dedicatorias en las fotografías. Todas las fotografías impresas serán entregadas exclusivamente al anfitrión al finalizar el evento. No se incluyen copias adicionales para los invitados. Cada paquete finaliza al alcanzar su límite de tiempo o de fotografías, lo que ocurra primero.",
+  class: className = "",
+} = Astro.props as Props & { class?: string };
+---
+
+<section
+  class:list={["modal-pricing", className]}
+  aria-labelledby="modal-pricing-title"
+>
+  <div class="modal-pricing-header">
+    {eyebrow && <p class="modal-pricing-eyebrow">{eyebrow}</p>}
+    <h3 id="modal-pricing-title" class="modal-pricing-title">{title}</h3>
+    {subtitle && <p class="modal-pricing-subtitle">{subtitle}</p>}
+  </div>
+
+  <div class="modal-pricing-grid">
+    {
+      tiers.map((tier) => (
+        <article
+          class:list={[
+            "modal-pricing-card",
+            tier.highlight && "modal-pricing-card--highlight",
+          ]}
+        >
+          {tier.badge && (
+            <span
+              class:list={[
+                "modal-pricing-badge",
+                tier.highlight && "modal-pricing-badge--highlight",
+              ]}
+            >
+              {tier.highlight && tier.highlightLabel
+                ? tier.highlightLabel
+                : tier.badge}
+            </span>
+          )}
+          <h4 class="modal-pricing-name">{tier.name}</h4>
+          {tier.desc && <p class="modal-pricing-desc">{tier.desc}</p>}
+          <div class="modal-pricing-price">
+            {tier.price}
+            {tier.period && <span> {tier.period}</span>}
+          </div>
+          {tier.ctaHref && tier.ctaText && (
+            <a
+              href={tier.ctaHref}
+              class="modal-pricing-cta"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {tier.ctaText}
+            </a>
+          )}
+          {tier.features && tier.features.length > 0 && (
+            <ul class="modal-pricing-list">
+              {tier.features.map((feature) => (
+                <li>{feature}</li>
+              ))}
+            </ul>
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  {
+    note && (
+      <div class="modal-pricing-note">
+        <p class="modal-pricing-note-title">Información importante</p>
+        <p>{note}</p>
+        <p class="modal-pricing-note-sign">
+          <strong>BLACK &amp; WHITE MOMENTS</strong>
+          <br />
+          <em>Because every moment deserves to be remembered.</em>
+        </p>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .modal-pricing {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(217, 221, 224, 0.18);
+    text-align: left;
+  }
+
+  .modal-pricing-header {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .modal-pricing-eyebrow {
+    margin: 0 0 0.3rem;
+    color: #d9dde0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .modal-pricing-title {
+    margin: 0 0 0.3rem;
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .modal-pricing-subtitle {
+    margin: 0;
+    color: #aeb7c2;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .modal-pricing-note {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #aeb7c2;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .modal-pricing-note p {
+    margin: 0;
+  }
+
+  .modal-pricing-note-title {
+    margin-bottom: 0.35rem !important;
+    color: #e3e6e8;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+  }
+
+  .modal-pricing-note-sign {
+    margin-top: 0.6rem !important;
+    color: #d9dde0;
+  }
+
+  .modal-pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .modal-pricing-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .modal-pricing-card--highlight {
+    border-color: rgba(234, 179, 8, 0.45);
+    background: rgba(234, 179, 8, 0.08);
+  }
+
+  .modal-pricing-badge {
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #d9dde0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .modal-pricing-badge--highlight {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+  }
+
+  .modal-pricing-name {
+    margin: 0 0 0.2rem;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .modal-pricing-desc {
+    margin: 0 0 0.6rem;
+    color: #9fb0c3;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .modal-pricing-price {
+    margin-bottom: 0.7rem;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .modal-pricing-price span {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .modal-pricing-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(217, 221, 224, 0.35);
+    border-radius: 10px;
+    color: #e3e6e8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .modal-pricing-cta:hover {
+    background: rgba(217, 221, 224, 0.12);
+    border-color: rgba(217, 221, 224, 0.55);
+  }
+
+  .modal-pricing-card--highlight .modal-pricing-cta {
+    border-color: rgba(234, 179, 8, 0.5);
+    color: #fff7d6;
+  }
+
+  .modal-pricing-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .modal-pricing-list li {
+    position: relative;
+    padding-left: 1rem;
+    color: #cbd5e1;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .modal-pricing-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #d9dde0;
+  }
+
+  @media (min-width: 720px) {
+    .modal-pricing-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+  }
+</style>

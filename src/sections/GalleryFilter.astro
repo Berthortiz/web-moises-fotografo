@@ -17,6 +17,7 @@
 // ✅ PhotoSwipe se carga desde jsDelivr. Los .MOV/.psd se ignoran.
 
 import { GALLERY as Gallery, PICTURES } from "../data/gallery";
+import { whatsappLink } from "../utils/whatsapp";
 
 // Solo el primer lote se renderiza como HTML; el resto queda como texto
 const INITIAL_COUNT = 15;
@@ -30,6 +31,8 @@ const FILTER_OTHERS = ["Spa", "Real Estate", "Producto"];
 const filterTabs = Gallery.filter(
     ({ label }) => !FILTER_OTHERS.includes(label),
 );
+
+const whatsappBase = whatsappLink("una foto de la galería").split("?text=")[0];
 ---
 
 <link
@@ -37,7 +40,11 @@ const filterTabs = Gallery.filter(
     href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css"
 />
 
-<section id="galeria" class="text-white px-6 py-18">
+<section
+    id="galeria"
+    class="text-white px-6 py-18"
+    data-whatsapp-base={whatsappBase}
+>
     <div class="max-w-6xl mx-auto py-8 flex flex-col justify-center lg:gap-4">
         <h1
             class="title-font font-serif leading-10 md:leading-10 font-bold text-center text-4xl
@@ -209,11 +216,125 @@ const filterTabs = Gallery.filter(
             )) as { default: PhotoSwipeLightboxConstructor };
 
             // Lee los enlaces del DOM al hacer clic, incluidos los lotes agregados.
-            const lightbox = new PhotoSwipeLightbox({
+            const lightbox = new (PhotoSwipeLightbox as any)({
                 gallery: "#gallery",
                 children: "a.gallery-item",
                 pswpModule: () => import(/* @vite-ignore */ PHOTOSWIPE_CDN),
+            }) as any;
+
+            const whatsappBase =
+                document
+                    .getElementById("galeria")
+                    ?.getAttribute("data-whatsapp-base") ?? "";
+
+            lightbox.on("uiRegister", () => {
+                const pswp = lightbox.pswp;
+                if (!pswp || !pswp.ui) return;
+
+                pswp.ui.registerElement({
+                    name: "whatsapp-contact",
+                    order: 9,
+                    isButton: false,
+                    tagName: "a",
+                    html: "Contactar a Moisés",
+                    onInit: (el: any, pswpInstance: any) => {
+                        const btn = el as HTMLAnchorElement;
+                        btn.classList.add("pswp-whatsapp-contact");
+                        btn.setAttribute("target", "_blank");
+                        btn.setAttribute("rel", "noopener noreferrer");
+                        btn.setAttribute(
+                            "aria-label",
+                            "Contactar a Moisés por WhatsApp",
+                        );
+
+                        let showTimer: number | undefined;
+
+                        const stop = (e: Event) => e.stopPropagation();
+                        ["click", "pointerdown", "touchstart"].forEach(
+                            (evt) => {
+                                btn.addEventListener(evt, stop);
+                            },
+                        );
+
+                        const setVisible = (visible: boolean) => {
+                            btn.style.opacity = visible ? "1" : "0";
+                            btn.style.visibility = visible
+                                ? "visible"
+                                : "hidden";
+                            btn.style.pointerEvents = visible
+                                ? "auto"
+                                : "none";
+                        };
+
+                        const updateLink = (slide: any) => {
+                            if (!slide || !whatsappBase) return;
+                            const alt =
+                                slide?.data?.alt ||
+                                slide?.content?.element?.alt ||
+                                "";
+                            const text = alt
+                                ? `la foto de la galería: ${alt}`
+                                : "una foto de la galería";
+                            btn.href = `${whatsappBase}?text=${encodeURIComponent(
+                                `Me interesa contratar tus servicios de: ${text}`,
+                            )}`;
+                        };
+
+                        const isLoaded = (slide: any) => {
+                            const content = slide?.content;
+                            return (
+                                content &&
+                                (content.state === "loaded" ||
+                                    content.element?.complete)
+                            );
+                        };
+
+                        const clearTimer = () => {
+                            if (showTimer) {
+                                window.clearTimeout(showTimer);
+                                showTimer = undefined;
+                            }
+                        };
+
+                        const scheduleShow = () => {
+                            clearTimer();
+                            const slide = pswpInstance.currSlide;
+                            if (!slide || !isLoaded(slide)) return;
+                            updateLink(slide);
+                            showTimer = window.setTimeout(() => {
+                                setVisible(true);
+                            }, 300);
+                        };
+
+                        const hide = () => {
+                            clearTimer();
+                            setVisible(false);
+                        };
+
+                        hide();
+
+                        pswpInstance.on("afterInit", () => {
+                            scheduleShow();
+                        });
+
+                        pswpInstance.on("change", () => {
+                            hide();
+                            requestAnimationFrame(() => scheduleShow());
+                        });
+
+                        pswpInstance.on("loadComplete", (e: any) => {
+                            if (e?.slide === pswpInstance.currSlide) {
+                                scheduleShow();
+                            }
+                        });
+
+                        pswpInstance.on("close", () => {
+                            hide();
+                        });
+                    },
+                });
             });
+
             lightbox.init();
         }
 
@@ -371,9 +492,49 @@ const filterTabs = Gallery.filter(
         }
     }
 
+    .pswp-whatsapp-contact {
+        position: fixed;
+        left: 50%;
+        bottom: 1.5rem;
+        z-index: 100020;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(13, 15, 19, 0.78);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        transform: translateX(-50%);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity 0.2s ease,
+            visibility 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .pswp-whatsapp-contact:hover {
+        background: rgba(37, 211, 102, 0.9);
+        color: #fff;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .gallery-image-loader {
             animation: none;
+        }
+
+        .pswp-whatsapp-contact {
+            transition: none;
         }
     }
 </style>

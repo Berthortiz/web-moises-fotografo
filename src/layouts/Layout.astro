@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import SEO from "../components/SEO.astro";
+import CookieConsent from "../components/CookieConsent.astro";
 import Footer from "../sections/Footer.astro";
 import { SITE_CONFIG } from "../consts/site-config";
 import "../css/style.css";
@@ -73,6 +74,7 @@ const {
 			<slot />
 		</main>
 		<Footer />
+		<CookieConsent />
 	</body>
 </html>
 

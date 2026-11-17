@@ -1,0 +1,84 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LegalPage from "../components/LegalPage.astro";
+
+const updated = new Date().toLocaleDateString("es-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
+---
+
+<Layout
+    title="Aviso legal y términos de uso | Moisés Magariño"
+    description="Términos de uso, propiedad intelectual y condiciones de acceso a moisesmagarino.com."
+    canonical="/aviso-legal/"
+>
+    <LegalPage
+        title="Aviso legal"
+        eyebrow="Condiciones de uso"
+        description="Al navegar por este sitio aceptas estas condiciones de uso. Las contrataciones de servicios se acuerdan por separado."
+        updated={updated}
+    >
+        <section>
+            <h2>Responsable del sitio</h2>
+            <p>
+                moisesmagarino.com es el portafolio profesional de Moisés Magariño,
+                fotógrafo y filmmaker con base en Florida, Estados Unidos. Para
+                consultas sobre el sitio o sus contenidos, escribe a
+                <a href="mailto:info@moisesmagarino.com">info@moisesmagarino.com</a>,
+                comunícate por
+                <a href="https://wa.link/c24rca">WhatsApp</a> o al
+                <a href="tel:+14075906377">+1 (407) 590-6377</a>.
+            </p>
+        </section>
+        <section>
+            <h2>Uso del sitio</h2>
+            <p>
+                Puedes navegar y compartir enlaces a las páginas públicas para fines
+                personales e informativos. No debes interferir con el funcionamiento
+                del sitio, intentar acceder sin autorización a sus sistemas ni usar
+                sus contenidos de forma ilícita o engañosa.
+            </p>
+        </section>
+        <section>
+            <h2>Propiedad intelectual</h2>
+            <p>
+                Las fotografías, videos, textos, identidad visual y demás materiales
+                publicados pertenecen a Moisés Magariño o se utilizan con autorización.
+                Ver, guardar o compartir un enlace no transfiere derechos ni concede
+                una licencia para reproducir, modificar, distribuir, publicar o usar
+                las imágenes con fines comerciales. Para solicitar autorización,
+                contáctanos antes de utilizarlas.
+            </p>
+        </section>
+        <section>
+            <h2>Servicios y contrataciones</h2>
+            <p>
+                La información del portafolio es orientativa y no constituye una oferta
+                vinculante ni una reserva de fecha. Alcance, disponibilidad, precios,
+                pagos, entregables, cancelaciones y licencias de uso se confirman en
+                una propuesta o acuerdo específico entre las partes.
+            </p>
+        </section>
+        <section>
+            <h2>Enlaces y disponibilidad</h2>
+            <p>
+                El sitio puede enlazar a servicios de terceros, cuyos contenidos y
+                prácticas son responsabilidad de sus respectivos titulares. Procuramos
+                mantener el sitio disponible y actualizado, pero no garantizamos
+                acceso ininterrumpido ni ausencia total de errores.
+            </p>
+        </section>
+        <section>
+            <h2>Legislación y actualizaciones</h2>
+            <p>
+                Estas condiciones se interpretan conforme a las leyes aplicables en
+                Florida y Estados Unidos, sin limitar derechos que no puedan excluirse
+                por ley. Podemos actualizar este aviso cuando cambie el sitio o sus
+                servicios; el uso posterior a una actualización implica consultar la
+                versión vigente.
+            </p>
+        </section>
+    </LegalPage>
+</Layout>
