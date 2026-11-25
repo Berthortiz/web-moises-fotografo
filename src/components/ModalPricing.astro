@@ -1,6 +1,4 @@
 ---
-import { whatsappLink } from "../utils/whatsapp";
-
 /**
  * Sección de precios y servicios pensada para mostrarse dentro del modal.
  */
@@ -8,6 +6,7 @@ interface PricingTier {
   badge?: string;
   name: string;
   desc?: string;
+  originalPrice?: string;
   price: string;
   period?: string;
   ctaText?: string;
@@ -29,17 +28,17 @@ interface Props {
 const {
   eyebrow = "BLACK & WHITE MOMENTS",
   title = "Exclusive Photography Experience",
-  subtitle =
-    "Transformamos tu evento en una experiencia fotográfica única, donde cada imagen en blanco y negro se convierte en un recuerdo inolvidable, acompañado de mensajes y dedicatorias de tus invitados.",
+  subtitle = "Transformamos tu evento en una experiencia fotográfica única, donde cada imagen en blanco y negro se convierte en un recuerdo inolvidable, acompañado de mensajes y dedicatorias de tus invitados.",
   tiers = [
     {
-      badge: "White Package",
+      badge: "Opción esencial",
       name: "White Package",
       desc: "Momentos únicos, recuerdos para siempre.",
+      originalPrice: "$1,326.67",
       price: "$995",
       period: "",
       ctaText: "Reservar",
-      ctaHref: whatsappLink("Black & White Moments - WHITE PACKAGE ($995)"),
+      ctaHref: "/reservas-paquetes/?package=white-package",
       features: [
         "2 horas de experiencia fotográfica",
         "Estudio fotográfico profesional instalado directamente en tu evento",
@@ -53,12 +52,13 @@ const {
       badge: "Black Package",
       name: "Black Package",
       desc: "Más momentos, más recuerdos para compartir.",
+      originalPrice: "$1,726.67",
       price: "$1,295",
       period: "",
       highlight: true,
       highlightLabel: "Más popular",
       ctaText: "Reservar",
-      ctaHref: whatsappLink("Black & White Moments - BLACK PACKAGE ($1,295)"),
+      ctaHref: "/reservas-paquetes/?package=black-package",
       features: [
         "3 horas de experiencia fotográfica",
         "Estudio fotográfico profesional instalado directamente en tu evento",
@@ -72,15 +72,14 @@ const {
       ],
     },
     {
-      badge: "Black & White Plus",
+      badge: "Experiencia más completa",
       name: "Black & White Plus",
       desc: "La experiencia más exclusiva para conservar tus mejores recuerdos.",
+      originalPrice: "$2,393.33",
       price: "$1,795",
       period: "",
       ctaText: "Reservar",
-      ctaHref: whatsappLink(
-        "Black & White Moments - BLACK & WHITE PLUS ($1,795)",
-      ),
+      ctaHref: "/reservas-paquetes/?package=black-white-plus",
       features: [
         "4 horas de experiencia fotográfica",
         "Estudio fotográfico profesional instalado directamente en tu evento",
@@ -106,72 +105,86 @@ const {
 >
   <div class="modal-pricing-header">
     {eyebrow && <p class="modal-pricing-eyebrow">{eyebrow}</p>}
-    <h3 id="modal-pricing-title" class="modal-pricing-title">{title}</h3>
+    <h3 id="modal-pricing-title" class="modal-pricing-title">
+      {title}
+    </h3>
     {subtitle && <p class="modal-pricing-subtitle">{subtitle}</p>}
+    <p class="modal-pricing-payment-terms">
+      Para reservar, se requiere un adelanto del 50%; el 50% restante debe
+      pagarse antes de comenzar el evento.
+    </p>
   </div>
 
   <div class="modal-pricing-grid">
-    {
-      tiers.map((tier) => (
-        <article
-          class:list={[
-            "modal-pricing-card",
-            tier.highlight && "modal-pricing-card--highlight",
-          ]}
-        >
-          {tier.badge && (
-            <span
-              class:list={[
-                "modal-pricing-badge",
-                tier.highlight && "modal-pricing-badge--highlight",
-              ]}
-            >
-              {tier.highlight && tier.highlightLabel
-                ? tier.highlightLabel
-                : tier.badge}
-            </span>
+    {tiers.map((tier) => (
+      <article
+        class:list={[
+          "modal-pricing-card",
+          tier.highlight && "modal-pricing-card--highlight",
+        ]}
+      >
+        {tier.badge && (
+          <span
+            class:list={[
+              "modal-pricing-badge",
+              tier.highlight && "modal-pricing-badge--highlight",
+            ]}
+          >
+            {tier.highlight && tier.highlightLabel
+              ? tier.highlightLabel
+              : tier.badge}
+          </span>
+        )}
+        <h4 class="modal-pricing-name">{tier.name}</h4>
+        {tier.desc && <p class="modal-pricing-desc">{tier.desc}</p>}
+        <div class="modal-pricing-price">
+          {tier.originalPrice && (
+            <del class="modal-pricing-original-price">
+              {tier.originalPrice}
+              <span class="modal-pricing-currency"> USD</span>
+            </del>
           )}
-          <h4 class="modal-pricing-name">{tier.name}</h4>
-          {tier.desc && <p class="modal-pricing-desc">{tier.desc}</p>}
-          <div class="modal-pricing-price">
+          {tier.originalPrice && (
+            <span class="modal-pricing-discount">25% OFF</span>
+          )}
+          <strong class="modal-pricing-current-price">
             {tier.price}
-            {tier.period && <span> {tier.period}</span>}
-          </div>
-          {tier.ctaHref && tier.ctaText && (
-            <a
-              href={tier.ctaHref}
-              class="modal-pricing-cta"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {tier.ctaText}
-            </a>
+            <span class="modal-pricing-currency"> USD</span>
+          </strong>
+          {tier.period && (
+            <span class="modal-pricing-period"> {tier.period}</span>
           )}
-          {tier.features && tier.features.length > 0 && (
-            <ul class="modal-pricing-list">
-              {tier.features.map((feature) => (
-                <li>{feature}</li>
-              ))}
-            </ul>
-          )}
-        </article>
-      ))
-    }
+        </div>
+        {tier.ctaHref && tier.ctaText && (
+          <a
+            href={tier.ctaHref}
+            class="modal-pricing-cta"
+          >
+            {tier.ctaText}
+          </a>
+        )}
+        {tier.features && tier.features.length > 0 && (
+          <ul class="modal-pricing-list">
+            {tier.features.map((feature) => (
+              <li>{feature}</li>
+            ))}
+          </ul>
+        )}
+      </article>
+    ))}
   </div>
 
-  {
-    note && (
-      <div class="modal-pricing-note">
-        <p class="modal-pricing-note-title">Información importante</p>
-        <p>{note}</p>
-        <p class="modal-pricing-note-sign">
-          <strong>BLACK &amp; WHITE MOMENTS</strong>
-          <br />
-          <em>Because every moment deserves to be remembered.</em>
-        </p>
-      </div>
-    )
-  }
+  {note && (
+    <div class="modal-pricing-note">
+      <p class="modal-pricing-note-title">Información importante</p>
+      <p>{note}</p>
+      <p class="modal-pricing-note-sign">
+        <strong>BLACK &amp; WHITE MOMENTS</strong>
+        <br />
+        <em>Because every moment deserves to be remembered.</em>
+      </p>
+    </div>
+  )}
 </section>
 
 <style>
@@ -210,6 +223,19 @@ const {
     color: #aeb7c2;
     font-size: 0.85rem;
     line-height: 1.5;
+  }
+
+  .modal-pricing-payment-terms {
+    max-width: 40rem;
+    margin: 0.75rem auto 0;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    border-radius: 10px;
+    background: rgba(234, 179, 8, 0.07);
+    color: #e3e6e8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.45;
   }
 
   .modal-pricing-note {
@@ -294,14 +320,47 @@ const {
   }
 
   .modal-pricing-price {
-    margin-bottom: 0.7rem;
-    color: #fff;
-    font-size: 1.25rem;
-    font-weight: 800;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.5rem;
+    order: -1;
+    margin-bottom: 0.85rem;
     line-height: 1.1;
   }
 
-  .modal-pricing-price span {
+  .modal-pricing-original-price {
+    order: 2;
+    flex-basis: 100%;
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration-thickness: 1px;
+  }
+
+  .modal-pricing-currency {
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+
+  .modal-pricing-discount {
+    order: 1;
+    padding: 0.15rem 0.4rem;
+    border-radius: 9999px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #86efac;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .modal-pricing-current-price {
+    order: 0;
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .modal-pricing-period {
     color: #94a3b8;
     font-size: 0.8rem;
     font-weight: 500;
@@ -319,7 +378,9 @@ const {
     font-size: 0.82rem;
     font-weight: 600;
     text-decoration: none;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .modal-pricing-cta:hover {

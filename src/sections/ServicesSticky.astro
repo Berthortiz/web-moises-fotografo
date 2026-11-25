@@ -3,44 +3,35 @@ import { Picture } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import ButtonPrimary from "../components/ButtonPrimary.astro";
 import ButtonShine from "../components/ButtonShine.astro";
-import { whatsappLink } from "../utils/whatsapp";
 import imagenBodas from "../assets/pagina web fotos y video/web bodas/DO-459.jpg";
 import imagenEventos from "../assets/pagina web fotos y video/web eventos/DSC00083-Mejorado-NR.jpg";
-import imagenQuince from "../assets/pexels-jorgegonzalez-34448535.jpg";
 import imagenRealState from "../assets/pagina web fotos y video/web realstate/DSC01319.JPG";
 import imagenPhotoshoot from "../assets/pagina web fotos y video/web photoshoot/DSC06344.JPG";
-import imagenLifestyle from "../assets/pagina web fotos y video/web photoshoot/DSC05356-Mejorado-NR.jpg";
 
 const services = [
   {
     title: "Bodas",
     image: imagenBodas,
+    href: "/galeria/bodas/",
     description: `Cobertura fotográfica para bodas, engagements y celebraciones íntimas en Miami, Fort Lauderdale, Coral Gables y todo el sur de Florida.`,
-  },
-  {
-    title: "Quinceaños",
-    image: imagenQuince,
-    description: `Sesiones y cobertura para 15 años, cumpleaños, reuniones familiares y momentos que merecen quedarse para siempre.`,
   },
   {
     title: "Real Estate",
     image: imagenRealState,
+    href: "/galeria/real-estate/",
     description: `Fotografía profesional para propiedades, alquileres, vendedores, desarrollos y agentes inmobiliarios con estilo premium.`,
   },
   {
     title: "Eventos y Conciertos",
     image: imagenEventos,
+    href: "/galeria/eventos/",
     description: `Captura la energía, emoción y atmósfera de conciertos, fiestas, festivales y eventos de gran escala en Miami.`,
   },
   {
     title: "Photoshoot",
     image: imagenPhotoshoot,
+    href: "/galeria/photoshoot/",
     description: `Retratos corporativos, lifestyle, headshots y sesiones personales con una estética elegante y auténtica.`,
-  },
-  {
-    title: "Lifestyle",
-    image: imagenLifestyle,
-    description: `Imágenes para marcas, editoriales, viajes y contenido visual premium que transmite lujo, estilo y presencia.`,
   },
 ];
 ---
@@ -98,10 +89,8 @@ const services = [
         services.map((service) => {
           return (
             <a
-              href={whatsappLink(service.title)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Contratar servicio de ${service.title} por WhatsApp`}
+              href={service.href}
+              aria-label={`Ver galería de ${service.title}`}
               class="card-servicio group relative flex flex-col gap-3 overflow-hidden rounded-2xl p-0 text-(--color-brand-secundary)"
             >
               <Picture
@@ -123,9 +112,11 @@ const services = [
                 class="absolute inset-0 bg-black/60"
               />
 
-              <h2 class="absolute inset-0 flex items-center justify-center px-6 text-center text-2xl font-medium leading-snug text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.45)] lg:text-2xl xl:text-3xl">
-                {service.title}
-              </h2>
+              <div class="absolute inset-0 flex items-center justify-center px-6">
+                <span class="service-btn inline-flex items-center justify-center rounded-full border-2 border-white/80 bg-transparent px-6 py-3 text-center text-xl font-medium leading-snug text-white transition-colors duration-300 group-hover:border-white group-hover:bg-white/10 lg:text-2xl xl:text-3xl [text-shadow:0_2px_4px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.45)]">
+                  {service.title}
+                </span>
+              </div>
             </a>
           );
         })

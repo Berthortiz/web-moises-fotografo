@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import ButtonShine from "../../components/ButtonShine.astro";
 import { GALLERY, type GalleryCategory } from "../../data/gallery";
+import { bookingServiceByGallerySlug } from "../../data/services";
 
 interface Props {
     category: GalleryCategory;
@@ -18,6 +20,7 @@ const title = `${category.title} | Moisés Magariño`;
 const pictures = category.pictures.filter(
     (picture) => picture.category === category.label,
 );
+const bookingService = bookingServiceByGallerySlug(category.slug);
 ---
 
 <Layout title={title} description={category.description}>
@@ -37,6 +40,18 @@ const pictures = category.pictures.filter(
             <p class="mx-auto max-w-[65ch] leading-7 text-gray-300 sm:text-lg">
                 {category.description}
             </p>
+
+            {
+                bookingService && (
+                    <div class="mt-8 flex justify-center">
+                        <ButtonShine
+                            href={`/reservas/?service=${bookingService.id}`}
+                            class="inline-flex items-center justify-center border border-[#d9dde0]/70 px-6 py-3 text-sm font-medium text-[#e3e6e8]"
+                            text={`Reservar ${bookingService.label}`}
+                        />
+                    </div>
+                )
+            }
         </header>
 
         <div

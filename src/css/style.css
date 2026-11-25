@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/*
+ * Tokens del formulario de reservas.
+ * Tailwind v4 los convierte en utilidades: bg-card, border-border,
+ * text-muted-foreground, ring-ring, etc.
+ */
+@theme {
+    --color-card: #12151a;
+    --color-card-foreground: #f3f4f6;
+    --color-foreground: #e5e7e9;
+    --color-primary: #f3f4f6;
+    --color-primary-foreground: #0d0f13;
+    --color-secondary: #1a1e24;
+    --color-muted-foreground: #9aa1a8;
+    --color-border: #2a2f36;
+    --color-input: #2a2f36;
+    --color-ring: #c3c7ca;
+    --color-destructive: #dc2626;
+    --color-success: #16a34a;
+    --radius: 0.75rem;
+}
+
 @layer base {
     html {
         scroll-behavior: smooth;

@@ -5,7 +5,7 @@
  * en vez del `wa.link` acortado porque `wa.me` permite personalizar el
  * texto del mensaje dinámicamente por servicio.
  */
-const WHATSAPP_NUMBER = "14075906377";
+export const WHATSAPP_NUMBER = "14075906377";
 
 export function whatsappLink(servicio: string): string {
 	const texto = `Me interesa contratar tus servicios de: ${servicio}`;
