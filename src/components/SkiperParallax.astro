@@ -1,7 +1,6 @@
 ---
 /**
- * Galería parallax de videos de fondo con el nombre "Moisés Magariño"
- * centrado encima.
+ * Galería parallax de videos de fondo.
  *
  * - Los videos viven en `src/assets/videos-moises` y los importa Astro
  *   (URL con hash en build, cero configuración).
@@ -80,19 +79,9 @@ const uniqueVideos = [
 <div class="w-full lg:pt-50">
   <!-- ===== Vista móvil (< lg): grid de 2 columnas con todos los
              videos únicos, sin parallax. El alto lo define el contenido
-             (aspect-ratio 9/16 por tile), no el viewport. El nombre
-             queda sticky en pantalla mientras la pila scrollea detrás.
+             (aspect-ratio 9/16 por tile), no el viewport.
              ===== -->
   <div class="relative lg:hidden">
-    <div class="pointer-events-none sticky top-[35vh] z-10 flex justify-center">
-      <p
-        class="parallax-name parallax-name-mobile relative text-center font-serif text-5xl leading-[1.02] text-white sm:text-6xl"
-      >
-        <span class="parallax-name-glow absolute inset-0" aria-hidden="true">
-        </span>
-        <span class="relative">Moisés Magariño</span>
-      </p>
-    </div>
     <div class="grid grid-cols-2 gap-2 p-2">
       {
         uniqueVideos.map((src) => (
@@ -145,20 +134,6 @@ const uniqueVideos = [
         </div>
       ))
     }
-
-    <!-- Nombre centrado con fondo elíptico: centro oscuro translúcido
-             que se funde a transparente en los lados -->
-    <div
-      class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
-    >
-      <p
-        class="parallax-name relative font-serif text-4xl leading-[1.02] text-white sm:text-6xl lg:text-7xl"
-      >
-        <span class="parallax-name-glow absolute inset-0" aria-hidden="true">
-        </span>
-        <span class="relative">Moisés Magariño</span>
-      </p>
-    </div>
   </div>
 </div>
 
@@ -230,41 +205,9 @@ const uniqueVideos = [
         });
       });
 
-      // El nombre entra con un "reveal wipe" (cortina de izquierda a
-      // derecha) cuando entra en pantalla. `once: true` para que solo
-      // se reproduzca la primera vez.
-      const name = gallery.querySelector<HTMLElement>(".parallax-name");
-      if (name) {
-        gsap.from(name, {
-          clipPath: "inset(0 100% 0 0)",
-          duration: 1.2,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: name,
-            start: "top 90%",
-            once: true,
-          },
-        });
-      }
     });
 
     mm.add("(max-width: 1023.98px)", () => {
-      // Reveal wipe del nombre sticky en móvil (sin parallax).
-      const mobileName = document.querySelector<HTMLElement>(
-        ".parallax-name-mobile",
-      );
-      if (mobileName) {
-        gsap.from(mobileName, {
-          clipPath: "inset(0 100% 0 0)",
-          duration: 1.2,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: mobileName,
-            start: "top 90%",
-            once: true,
-          },
-        });
-      }
     });
 
     window.addEventListener("resize", () => {
@@ -294,33 +237,5 @@ const uniqueVideos = [
 
   .parallax-tile {
     height: var(--tile-h);
-  }
-
-  /*
-    Viñeta elíptica centrada en el nombre: núcleo oscuro que se funde
-    a transparente hacia los bordes, destacando al texto blanco.
-  */
-  .parallax-name {
-    /* elipse holgada alrededor del texto */
-    padding: 3rem 5rem;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.95);
-
-    clip-path: inset(0 0% 0 0);
-  }
-
-  .parallax-name-glow {
-    background-image: radial-gradient(
-      ellipse 80% 50% at 50% 50%,
-      rgba(0, 0, 0, 0.95) 0%,
-      rgba(0, 0, 0, 0) 70%
-    );
-  }
-
-  /* En pantallas pequeñas el padding holgado de la elipse es
-     demasiado ancho: lo reducimos para que el glow siga al texto. */
-  @media (max-width: 640px) {
-    .parallax-name {
-      padding: 1.5rem 2rem;
-    }
   }
 </style>

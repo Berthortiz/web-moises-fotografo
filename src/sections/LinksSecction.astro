@@ -1,7 +1,10 @@
 ---
+import { Icon } from "astro-icon/components";
+
 // Interfaces para el tipado (opcional si usas TypeScript)
 interface LinkItem {
     title: string;
+    icon: string;
     handle?: string;
     description: string;
     url: string;
@@ -29,6 +32,7 @@ const {
 const links: LinkItem[] = [
     {
         title: "Instagram",
+        icon: "icon-instagram",
         handle: "@moises_magarino",
         description: "Fotografía, videografía y detrás de cámaras",
         url: "https://www.instagram.com/moises_magarino/",
@@ -39,6 +43,7 @@ const links: LinkItem[] = [
 
     {
         title: "YouTube",
+        icon: "icon-youtube",
         handle: "@moisesmagarino",
         description: "Conciertos, podcasts y proyectos audiovisuales",
         url: "https://www.youtube.com/user/moisesmagarino",
@@ -48,6 +53,7 @@ const links: LinkItem[] = [
     },
     {
         title: "WhatsApp",
+        icon: "whatsapp-solid",
         description: "Contáctame para hablar sobre tu próximo proyecto",
         url: "https://wa.link/c24rca",
         metaText: "Escríbeme ahora",
@@ -56,6 +62,7 @@ const links: LinkItem[] = [
     },
     {
         title: "Teléfono",
+        icon: "phone-call",
         handle: "+1 (407) 590-6377",
         description: "Contacto directo por llamada",
         url: "tel:+14075906377",
@@ -65,6 +72,7 @@ const links: LinkItem[] = [
 
     {
         title: "Conciertos",
+        icon: "camera-icon",
         description:
             "Fotografía y video en vivo con toda la energía del escenario",
         url: "#",
@@ -72,18 +80,21 @@ const links: LinkItem[] = [
     },
     {
         title: "Podcasts",
+        icon: "communication",
         description: "Producción y contenido audiovisual para podcasts",
         url: "#",
         metaText: "Producción audiovisual",
     },
     {
         title: "Creación de contenido",
+        icon: "brush-2",
         description: "Contenido visual para artistas, marcas y proyectos",
         url: "#",
         metaText: "Foto + video",
     },
     {
         title: "Sony Alpha Creator",
+        icon: "camera-icon",
         description: "Creación de imágenes con el sistema Sony Alpha",
         url: "#",
         metaText: "Sony Alpha",
@@ -114,6 +125,9 @@ const links: LinkItem[] = [
                             }
                             class="link-card"
                         >
+                            <span class="link-icon" aria-hidden="true">
+                                <Icon name={link.icon} size={26} />
+                            </span>
                             <div class="link-info">
                                 <h3 class="link-title">
                                     {link.title}
@@ -173,16 +187,7 @@ const links: LinkItem[] = [
             Cantarell,
             sans-serif;
         color: #e5e7e9;
-        background:
-            radial-gradient(
-                ellipse at 50% 0%,
-                rgba(218, 223, 228, 0.2),
-                transparent 48%
-            ),
-            linear-gradient(135deg, #191a1c 0%, #292b2e 52%, #171819 100%);
-        box-shadow:
-            0 24px 80px rgba(0, 0, 0, 0.28),
-            inset 0 1px 0 rgba(235, 238, 240, 0.08);
+        background: transparent;
     }
 
     .section-header {
@@ -226,20 +231,17 @@ const links: LinkItem[] = [
     /* Lista de Enlaces */
     .links-list {
         list-style: none;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
         padding: 0;
         margin: 0;
     }
 
     .link-item {
-        border-top: 1px solid rgba(220, 224, 228, 0.14);
+        min-width: 0;
         opacity: 0;
         animation: fadeInUp 0.6s ease-out forwards;
-    }
-
-    .link-item:last-child {
-        border-bottom: 1px solid rgba(220, 224, 228, 0.14);
     }
 
     /* Delays escalonados para la entrada de cada ítem */
@@ -265,29 +267,52 @@ const links: LinkItem[] = [
     /* Estilos del Enlace y Transiciones */
     .link-card {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
         justify-content: space-between;
-        align-items: center;
-        padding: 24px 16px;
+        gap: 24px;
+        height: 100%;
+        min-height: 190px;
+        padding: 24px;
         text-decoration: none;
         color: inherit;
         transition:
             background-color 0.25s ease,
             transform 0.25s ease,
-            padding-left 0.25s ease,
-            padding-right 0.25s ease,
             box-shadow 0.25s ease,
             border-color 0.25s ease;
         border-radius: 14px;
-        border: 1px solid transparent;
+        border: 1px solid rgba(215, 221, 226, 0.14);
+        background-color: rgba(225, 230, 234, 0.035);
     }
 
     .link-card:hover {
         background-color: rgba(225, 230, 234, 0.055);
-        padding-left: 22px;
-        padding-right: 22px;
         transform: translateY(-1px);
         box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
         border-color: rgba(215, 221, 226, 0.24);
+    }
+
+    .link-icon {
+        display: grid;
+        width: 52px;
+        height: 52px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid rgba(215, 221, 226, 0.16);
+        border-radius: 14px;
+        color: #e5e7e9;
+        background: rgba(225, 230, 234, 0.08);
+        transition:
+            color 0.25s ease,
+            background-color 0.25s ease,
+            transform 0.25s ease;
+    }
+
+    .link-card:hover .link-icon {
+        color: #fff;
+        background-color: rgba(225, 230, 234, 0.15);
+        transform: translateY(-2px);
     }
 
     .link-info {
@@ -334,7 +359,7 @@ const links: LinkItem[] = [
         display: flex;
         align-items: center;
         gap: 12px;
-        text-align: right;
+        text-align: left;
     }
 
     .meta-text {
@@ -369,9 +394,12 @@ const links: LinkItem[] = [
             padding-left: 0;
         }
 
+        .links-list {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
         .link-card {
-            flex-direction: column;
-            align-items: flex-start;
             gap: 10px;
             padding: 18px 12px;
         }
@@ -391,6 +419,12 @@ const links: LinkItem[] = [
         }
         .section-title {
             font-size: 2.2rem;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 1023px) {
+        .links-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 </style>
